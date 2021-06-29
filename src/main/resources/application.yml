@@ -4,7 +4,7 @@ aws:
   access:
     access-key: AKIAZK2JA2ZMTRFSMRFK
     secret-key: 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
-    ##service-endpoint: dynamodb.us-east-2.amazonaws.com
+    service-endpoint: dynamodb.us-east-2.amazonaws.com
   cognito:
     clientId : 1pkm2c3gg6s83t8a72bdcmdeti
     userPoolId: us-east-2_UtujH4zQk

@@ -1,7 +1,9 @@
 package com.samy.service.cognitoapp.model.request;
 
+import static com.samy.service.cognitoapp.utils.Constant.regexEmail;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -22,5 +24,6 @@ public class ColaboradoresBody {
 
 	@NotNull
 	@NotEmpty
+	@Pattern(regexp = regexEmail, message = "No es un correo valido")
 	private String correo;
 }

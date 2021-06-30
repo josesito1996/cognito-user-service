@@ -29,7 +29,7 @@ public class CognitoRequestBuilder {
 		try {
 			AdminDeleteUserRequest newDeleteRequest = new AdminDeleteUserRequest().withUserPoolId(userPoolId)
 					.withUsername(userName);
-			return cognitoClient.adminDeleteUser(newDeleteRequest);	
+			return cognitoClient.adminDeleteUser(newDeleteRequest);
 		} catch (Exception e) {
 			throw new AWSCognitoIdentityProviderException(e.getMessage());
 		}
@@ -37,12 +37,14 @@ public class CognitoRequestBuilder {
 
 	public AdminSetUserPasswordResult addUser(UserRequestBody request, AWSCognitoIdentityProvider cognitoClient) {
 		try {
+			AttributeType nombres = new AttributeType().withName("custom:nombres").withValue(request.getNombres());
+			AttributeType apellidos = new AttributeType().withName("custom:apellidos").withValue(request.getApellidos());
 			AttributeType emailAttr = new AttributeType().withName("email").withValue(request.getCorreo());
 			AttributeType emailVerifiedAttr = new AttributeType().withName("email_verified").withValue("true");
 			AdminCreateUserRequest newRequest = new AdminCreateUserRequest().withUserPoolId(userPoolId)
 					.withUsername(request.getNombreUsuario()).withTemporaryPassword(request.getContraseña())
-					.withUserAttributes(emailAttr, emailVerifiedAttr).withMessageAction(MessageActionType.SUPPRESS)
-					.withDesiredDeliveryMediums(DeliveryMediumType.EMAIL);
+					.withUserAttributes(emailAttr, emailVerifiedAttr, nombres, apellidos)
+					.withMessageAction(MessageActionType.SUPPRESS).withDesiredDeliveryMediums(DeliveryMediumType.EMAIL);
 			@SuppressWarnings("unused")
 			AdminCreateUserResult createResult = cognitoClient.adminCreateUser(newRequest);
 			AdminSetUserPasswordRequest adminSetUserPasswordRequest = new AdminSetUserPasswordRequest()

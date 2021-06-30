@@ -9,6 +9,8 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -32,8 +34,7 @@ public class UserRequestBody {
 	@NotEmpty
 	private String apellidos;
 
-	@NotNull
-	@NotEmpty
+	@JsonIgnore
 	private String nombreUsuario;
 
 	@NotNull

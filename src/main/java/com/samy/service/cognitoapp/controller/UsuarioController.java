@@ -23,7 +23,7 @@ public class UsuarioController {
 
 	@PostMapping("/createUser")
 	public UserResponseBody crearUsuario(@Valid @RequestBody UserRequestBody request) {
-
+		request.setNombreUsuario(request.getCorreo());
 		return cognitoService.registrarUsuario(request);
 	}
 	

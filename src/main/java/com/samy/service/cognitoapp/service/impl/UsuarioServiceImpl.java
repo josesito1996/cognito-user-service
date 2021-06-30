@@ -49,4 +49,9 @@ public class UsuarioServiceImpl extends CrudImpl<Usuario, String> implements Usu
 		return repo.findByNombreUsuario(userName);
 	}
 
+	@Override
+	public Usuario buscarPorCorreo(String correo) {
+		return repo.findByCorreo(correo);
+	}
+
 }

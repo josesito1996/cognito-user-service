@@ -7,4 +7,7 @@ import com.samy.service.cognitoapp.model.Usuario;
 @EnableScan
 public interface UsuarioRepo extends GenericRepo<Usuario, String>{
 	
+	Usuario findByNombreUsuario(String userName);
+	
+	Usuario findByNombreUsuarioAndEstado(String userName, Boolean estado);
 }

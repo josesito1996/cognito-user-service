@@ -7,6 +7,8 @@ import com.amazonaws.services.cognitoidp.AWSCognitoIdentityProvider;
 import com.amazonaws.services.cognitoidp.model.AWSCognitoIdentityProviderException;
 import com.amazonaws.services.cognitoidp.model.AdminCreateUserRequest;
 import com.amazonaws.services.cognitoidp.model.AdminCreateUserResult;
+import com.amazonaws.services.cognitoidp.model.AdminDeleteUserRequest;
+import com.amazonaws.services.cognitoidp.model.AdminDeleteUserResult;
 import com.amazonaws.services.cognitoidp.model.AdminSetUserPasswordRequest;
 import com.amazonaws.services.cognitoidp.model.AdminSetUserPasswordResult;
 import com.amazonaws.services.cognitoidp.model.AttributeType;
@@ -23,7 +25,17 @@ public class CognitoRequestBuilder {
 	@Value(value = "${aws.cognito.userPoolId}")
 	private String userPoolId;
 
-	public AdminSetUserPasswordResult build(UserRequestBody request, AWSCognitoIdentityProvider cognitoClient) {
+	public AdminDeleteUserResult deleteUser(String userName, AWSCognitoIdentityProvider cognitoClient) {
+		try {
+			AdminDeleteUserRequest newDeleteRequest = new AdminDeleteUserRequest().withUserPoolId(userPoolId)
+					.withUsername(userName);
+			return cognitoClient.adminDeleteUser(newDeleteRequest);	
+		} catch (Exception e) {
+			throw new AWSCognitoIdentityProviderException(e.getMessage());
+		}
+	}
+
+	public AdminSetUserPasswordResult addUser(UserRequestBody request, AWSCognitoIdentityProvider cognitoClient) {
 		try {
 			AttributeType emailAttr = new AttributeType().withName("email").withValue(request.getCorreo());
 			AttributeType emailVerifiedAttr = new AttributeType().withName("email_verified").withValue("true");

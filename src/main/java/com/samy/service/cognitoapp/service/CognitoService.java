@@ -7,5 +7,6 @@ public interface CognitoService {
 
 	public UserResponseBody registrarUsuario(UserRequestBody body);
 	
+	public UserResponseBody eliminarUsuario(String userName);
 
 }

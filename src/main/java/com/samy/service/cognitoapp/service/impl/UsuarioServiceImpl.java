@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.samy.service.cognitoapp.exception.NotFoundException;
 import com.samy.service.cognitoapp.model.Usuario;
 import com.samy.service.cognitoapp.model.request.UserRequestBody;
 import com.samy.service.cognitoapp.repository.GenericRepo;
@@ -31,6 +32,21 @@ public class UsuarioServiceImpl extends CrudImpl<Usuario, String> implements Usu
 		usuario.setFechaCreacion(LocalDateTime.now());
 		usuario.setEstado(true);
 		return registrar(usuario);
+	}
+
+	@Override
+	public Usuario buscarPorNombreUsuario(String userName) {
+		Usuario usuario = repo.findByNombreUsuarioAndEstado(userName, true);
+		if (usuario == null) {
+			throw new NotFoundException("Usuario con el nombre " + userName + " no existe en la base de datos");
+		}
+		return usuario;
+	}
+
+	@Override
+	public Usuario buscarPorUserName(String userName) {
+
+		return repo.findByNombreUsuario(userName);
 	}
 
 }

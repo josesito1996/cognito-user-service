@@ -37,10 +37,11 @@ public class CognitoServiceImpl implements CognitoService {
 		AdminSetUserPasswordResult result = builder.addUser(body, cognitoClient);
 		if (result.getSdkResponseMetadata() != null) {
 			log.info("Dentro " + result);
-			return new UserResponseBody(usuarioService.registrarUsuario(body).getIdUsuario());
+			Usuario userUsuario = usuarioService.registrarUsuario(body);
+			return new UserResponseBody(userUsuario.getIdUsuario(), userUsuario.getNombres(), userUsuario.getCorreo());
 		}
 		log.error("Error " + result);
-		return new UserResponseBody("Error al registrar");
+		return new UserResponseBody("Error al registrar", "", "");
 	}
 
 	@Override
@@ -48,12 +49,11 @@ public class CognitoServiceImpl implements CognitoService {
 		Usuario usuario = usuarioService.buscarPorNombreUsuario(userName);
 		AdminDeleteUserResult deleteResult = builder.deleteUser(userName, cognitoClient);
 		if (deleteResult.getSdkResponseMetadata().getRequestId() != null) {
-			log.info("Dentro de la eliminacion " + deleteResult);
-			log.info("Usuario encontrado " + deleteResult);
+
 			usuario.setEstado(false);
-			return new UserResponseBody(usuarioService.modificar(usuario).getIdUsuario());
+			return new UserResponseBody(usuarioService.modificar(usuario).getIdUsuario(), "", "");
 		}
-		return new UserResponseBody("Error al Eliminar");
+		return new UserResponseBody("Error al Eliminar", "", "");
 	}
 
 }

@@ -10,5 +10,9 @@ import lombok.NoArgsConstructor;
 public class UserResponseBody {
 
 	private String id;
+	
+	private String nombres;
+	
+	private String correo;
 
 }

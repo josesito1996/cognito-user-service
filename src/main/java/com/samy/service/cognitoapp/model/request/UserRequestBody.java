@@ -8,6 +8,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -42,6 +43,7 @@ public class UserRequestBody {
 	@Pattern(regexp = regexEmail, message = "No es un correo valido")
 	private String correo;
 
+	@Size(min = 8, message = "Minimo 8 caracteres")
 	@NotNull
 	@NotEmpty
 	// @Pattern(regexp = regexPassword, message = "La contraseña debe tener

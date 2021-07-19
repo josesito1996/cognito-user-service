@@ -44,7 +44,7 @@ public class Usuario {
 	private String correo;
 
 	@DynamoDBAttribute
-	private String contraseña;
+	private String contrasena;
 
 	@DynamoDBAttribute
 	private Boolean terminos;

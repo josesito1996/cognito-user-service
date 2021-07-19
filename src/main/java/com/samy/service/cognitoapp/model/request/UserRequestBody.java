@@ -2,6 +2,7 @@ package com.samy.service.cognitoapp.model.request;
 
 //import static com.samy.service.cognitoapp.utils.Constant.regexPassword;
 import static com.samy.service.cognitoapp.utils.Constant.regexEmail;
+
 import java.util.List;
 
 import javax.validation.Valid;

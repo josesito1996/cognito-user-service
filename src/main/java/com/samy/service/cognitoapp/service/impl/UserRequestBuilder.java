@@ -20,7 +20,7 @@ public class UserRequestBuilder {
 				.apellidos(requestBody.getApellidos())
 				.nombreUsuario(requestBody.getNombreUsuario())
 				.correo(requestBody.getCorreo())
-				.contraseña(requestBody.getContraseña())
+				.contrasena(requestBody.getContraseña())
 				.terminos(requestBody.getTerminos())
 				.empresa(requestBody.getEmpresa())
 				.colaboradores(transformToColaboradorBody(requestBody.getColaboradores()))

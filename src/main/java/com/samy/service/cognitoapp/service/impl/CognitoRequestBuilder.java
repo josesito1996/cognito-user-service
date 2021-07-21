@@ -38,12 +38,13 @@ public class CognitoRequestBuilder {
 	public AdminSetUserPasswordResult addUser(UserRequestBody request, AWSCognitoIdentityProvider cognitoClient) {
 		try {
 			AttributeType nombres = new AttributeType().withName("custom:nombres").withValue(request.getNombres());
-			AttributeType apellidos = new AttributeType().withName("custom:apellidos").withValue(request.getApellidos());
+			AttributeType apellidoPaterno = new AttributeType().withName("custom:apellidoPaterno").withValue(request.getApellidos());
+			AttributeType apellidoMaterno = new AttributeType().withName("custom:apellidoMaterno").withValue(request.getApellidos());
 			AttributeType emailAttr = new AttributeType().withName("email").withValue(request.getCorreo());
 			AttributeType emailVerifiedAttr = new AttributeType().withName("email_verified").withValue("true");
 			AdminCreateUserRequest newRequest = new AdminCreateUserRequest().withUserPoolId(userPoolId)
 					.withUsername(request.getNombreUsuario()).withTemporaryPassword(request.getContraseña())
-					.withUserAttributes(emailAttr, emailVerifiedAttr, nombres, apellidos)
+					.withUserAttributes(emailAttr, emailVerifiedAttr, nombres, apellidoPaterno, apellidoMaterno)
 					.withMessageAction(MessageActionType.SUPPRESS).withDesiredDeliveryMediums(DeliveryMediumType.EMAIL);
 			@SuppressWarnings("unused")
 			AdminCreateUserResult createResult = cognitoClient.adminCreateUser(newRequest);

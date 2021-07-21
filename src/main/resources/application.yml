@@ -5,12 +5,12 @@ aws:
   default:
     region: us-east-2
   access:
-    access-key: AKIAZK2JA2ZMTRFSMRFK
-    secret-key: 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
+    access-key: AKIA5Z6LZFXPAWUQ2LFZ
+    secret-key: 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
     service-endpoint: dynamodb.us-east-2.amazonaws.com
   cognito:
-    clientId : 1pkm2c3gg6s83t8a72bdcmdeti
-    userPoolId: us-east-2_UtujH4zQk
+    clientId : 277kjuq3rnq4uu13ub0mo2m8j9
+    userPoolId: us-east-2_VwNQ8ewTR
     region: us-east-2
     connectionTimeOut: 200
     readTimeOut: 2000

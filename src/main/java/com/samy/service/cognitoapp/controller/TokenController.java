@@ -20,7 +20,7 @@ public class TokenController {
     @GetMapping(path = "/authenticate")
     public RedirectView redirectToPage(@RequestParam String tokenKey) {
         if (usuarioService.activarUsuario(tokenKey)) {
-            return new RedirectView("https://www.youtube.com");
+            return new RedirectView("https://dev.d1m4mh8zc59yft.amplifyapp.com/");
         } else {
             throw new BadRequestException("No de puedo validar el usuario");
         }

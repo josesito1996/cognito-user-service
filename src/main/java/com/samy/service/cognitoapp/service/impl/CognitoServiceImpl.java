@@ -31,7 +31,7 @@ public class CognitoServiceImpl implements CognitoService {
 
     @Override
     public UserResponseBody registrarUsuario(UserRequestBody body) {
-        Usuario usuarioEncontrado = usuarioService.buscarPorUserName(body.getNombreUsuario());
+        Usuario usuarioEncontrado = usuarioService.buscarPorNombreUsuario(body.getNombreUsuario());
         if (usuarioEncontrado != null) {
             throw new FoundException(
                     "Usuario " + body.getNombreUsuario() + " ya existe en la base de datos");
@@ -43,8 +43,7 @@ public class CognitoServiceImpl implements CognitoService {
             return UserResponseBody.builder().id(userUsuario.getIdUsuario())
                     .datosUsuario(
                             userUsuario.getNombres().concat(" ").concat(userUsuario.getApellidos()))
-                    .nombreUsuario(userUsuario.getNombreUsuario())
-                    .build();
+                    .nombreUsuario(userUsuario.getNombreUsuario()).build();
         }
         log.error("Error " + result);
         throw new BadRequestException("Error al registrar usuario : " + result);
@@ -62,4 +61,19 @@ public class CognitoServiceImpl implements CognitoService {
         return new UserResponseBody("Error al Eliminar", "", "");
     }
 
+    @Override
+    public UserResponseBody registrarUsuarioV2(UserRequestBody body) {
+        log.info("CognitoServiceImpl.registrarUsuarioV2");
+        log.info("UserRequestBody : " + body.toString());
+        AdminSetUserPasswordResult result = builder.addUser(body, cognitoClient);
+        if (result.getSdkResponseMetadata() != null) {
+            log.info("Dentro " + result);
+            Usuario userUsuario = usuarioService.buscarPorNombreUsuarioPorCognito(body.getNombreUsuario());
+            return UserResponseBody.builder().id(userUsuario.getIdUsuario())
+                    .datosUsuario(
+                            userUsuario.getNombres().concat(" ").concat(userUsuario.getApellidos()))
+                    .nombreUsuario(userUsuario.getNombreUsuario()).build();
+        }
+        return null;
+    }
 }

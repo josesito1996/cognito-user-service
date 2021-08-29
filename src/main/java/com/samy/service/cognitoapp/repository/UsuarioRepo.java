@@ -5,11 +5,13 @@ import org.socialsignin.spring.data.dynamodb.repository.EnableScan;
 import com.samy.service.cognitoapp.model.Usuario;
 
 @EnableScan
-public interface UsuarioRepo extends GenericRepo<Usuario, String>{
-	
-	Usuario findByNombreUsuario(String userName);
-	
-	Usuario findByCorreo(String correo);
-	
-	Usuario findByNombreUsuarioAndEstado(String userName, Boolean estado);
+public interface UsuarioRepo extends GenericRepo<Usuario, String> {
+    
+    Usuario findByNombreUsuario(String userName);
+    
+    Usuario findByCorreo(String correo);
+    
+    Usuario findByNombreUsuarioAndEstado(String userName, boolean estado);
+
+    
 }

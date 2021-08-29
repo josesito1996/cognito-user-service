@@ -59,5 +59,12 @@ public class Usuario {
 	@DynamoDBAttribute
 	private LocalDateTime fechaCreacion;
 	
+	@DynamoDBAttribute
 	private Boolean estado;
+	
+	@DynamoDBAttribute
+	private Boolean eliminado;
+	
+	@DynamoDBAttribute
+    private Boolean validado;
 }

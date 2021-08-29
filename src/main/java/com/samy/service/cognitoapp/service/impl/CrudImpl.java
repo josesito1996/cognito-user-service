@@ -16,7 +16,7 @@ public abstract class CrudImpl<T, ID> implements ICrud<T, ID> {
 	public T registrar(T t) {
 		return getRepo().save(t);
 	};
-
+	
 	@Override
 	public T modificar(T t) {
 		return getRepo().save(t);

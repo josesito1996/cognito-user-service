@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.samy.service.cognitoapp.model.Usuario;
 import com.samy.service.cognitoapp.model.request.UserRequestBody;
 import com.samy.service.cognitoapp.model.response.UserResponseBody;
 import com.samy.service.cognitoapp.service.CognitoService;
@@ -29,6 +30,12 @@ public class UsuarioController {
 	public UserResponseBody crearUsuario(@Valid @RequestBody UserRequestBody request) {
 		request.setNombreUsuario(request.getCorreo());
 		return cognitoService.registrarUsuario(request);
+	}
+	
+	@PostMapping("/createUserv2")
+	public Usuario createUserV2(@Valid @RequestBody UserRequestBody request) {
+	    request.setNombreUsuario(request.getCorreo());
+	    return usuarioService.registrarUsuarioV2(request);
 	}
 	
 	@GetMapping("/getUser/{userName}")

@@ -4,6 +4,7 @@ import static com.samy.service.cognitoapp.utils.JwtUtil.decodedJwt;
 import static com.samy.service.cognitoapp.utils.JwtUtil.getJwtFromObjectAuthentication;
 import static com.samy.service.cognitoapp.utils.Utils.buildBodyForToken;
 import static com.samy.service.cognitoapp.utils.Utils.cleanId;
+import static com.samy.service.cognitoapp.utils.Utils.extraerNombreUsuario;
 import static com.samy.service.cognitoapp.utils.Utils.messagewelcomeHtmlBuilder;
 import static com.samy.service.cognitoapp.utils.Utils.numberToLocalDateTime;
 
@@ -113,8 +114,17 @@ public class UsuarioServiceImpl extends CrudImpl<Usuario, String> implements Usu
     public Usuario registrarUsuarioV2(UserRequestBody requestBody) {
         log.info("UsuarioServiceImpl.registrarUsuarioV2");
         JsonObject obj = new JsonObject();
-        obj.addProperty("email", requestBody.getNombreUsuario());
-        JsonObject lambdaResponse = lambdaService.validEmailWithLambda(obj.toString());
+        JsonObject objMailBody = new JsonObject();
+        objMailBody.addProperty("nombreUsuario",
+                extraerNombreUsuario(requestBody.getNombreUsuario()));
+        objMailBody.addProperty("nombres", requestBody.getNombres());
+        objMailBody.addProperty("apellidos", requestBody.getApellidos());
+        objMailBody.addProperty("password", requestBody.getContraseña());
+        obj.addProperty("httpStatus", "VALID_EMAIL");
+        obj.addProperty("emailToFind", requestBody.getNombreUsuario());
+        obj.add("mailBody", objMailBody);
+
+        JsonObject lambdaResponse = lambdaService.validEmailAndRegisterWithLambda(obj.toString());
         boolean estado = lambdaResponse.get("estado").getAsBoolean();
         log.info("validEmailWithLambda : " + estado);
         if (estado) {
@@ -140,7 +150,8 @@ public class UsuarioServiceImpl extends CrudImpl<Usuario, String> implements Usu
             }
             throw new BadRequestException("Error al enviar el correo de autenticacion !!!!");
         } else {
-            throw new BadRequestException("Email " + requestBody.getNombreUsuario() +" no es un correo valido");
+            String mensaje = lambdaResponse.get("mensaje").getAsString();
+            throw new BadRequestException("Email " + requestBody.getNombreUsuario() + mensaje);
         }
     }
 

@@ -1,7 +1,7 @@
 package com.samy.service.cognitoapp.model.request;
 
-//import static com.samy.service.cognitoapp.utils.Constant.regexPassword;
 import static com.samy.service.cognitoapp.utils.Constant.regexEmail;
+import static com.samy.service.cognitoapp.utils.Constant.regexPassword;
 
 import java.util.List;
 
@@ -49,7 +49,7 @@ public class UserRequestBody {
 	@Size(min = 8, message = "Minimo 8 caracteres")
 	@NotNull
 	@NotEmpty
-	// @Pattern(regexp = regexPassword, message = "La contraseña debe tener
+	@Pattern(regexp = regexPassword, message = "La contraseña debe tener caracteres especiales")
 	// caracteres especiales")
 	private String contraseña;
 

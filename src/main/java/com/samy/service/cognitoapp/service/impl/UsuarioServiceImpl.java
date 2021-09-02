@@ -4,7 +4,6 @@ import static com.samy.service.cognitoapp.utils.JwtUtil.decodedJwt;
 import static com.samy.service.cognitoapp.utils.JwtUtil.getJwtFromObjectAuthentication;
 import static com.samy.service.cognitoapp.utils.Utils.buildBodyForToken;
 import static com.samy.service.cognitoapp.utils.Utils.cleanId;
-import static com.samy.service.cognitoapp.utils.Utils.extraerNombreUsuario;
 import static com.samy.service.cognitoapp.utils.Utils.messagewelcomeHtmlBuilder;
 import static com.samy.service.cognitoapp.utils.Utils.numberToLocalDateTime;
 
@@ -113,46 +112,39 @@ public class UsuarioServiceImpl extends CrudImpl<Usuario, String> implements Usu
     @Override
     public Usuario registrarUsuarioV2(UserRequestBody requestBody) {
         log.info("UsuarioServiceImpl.registrarUsuarioV2");
+        /*
+         * JsonObject obj = new JsonObject(); JsonObject objMailBody = new JsonObject();
+         * objMailBody.addProperty("nombreUsuario",
+         * extraerNombreUsuario(requestBody.getNombreUsuario()));
+         * objMailBody.addProperty("nombres", requestBody.getNombres());
+         * objMailBody.addProperty("apellidos", requestBody.getApellidos());
+         * objMailBody.addProperty("password", requestBody.getContraseña());
+         * obj.addProperty("httpStatus", "VALID_EMAIL"); obj.addProperty("emailToFind",
+         * requestBody.getNombreUsuario()); obj.add("mailBody", objMailBody);
+         * 
+         * JsonObject lambdaResponse =
+         * lambdaService.validEmailAndRegisterWithLambda(obj.toString()); boolean estado
+         * = lambdaResponse.get("estado").getAsBoolean();
+         */
+        Usuario usuario = builder.transformFromUserRequestBody(requestBody);
+        usuario.setEliminado(false);
+        usuario.setEstado(false);
+        usuario.setValidado(false);
+        usuario.setFechaCreacion(LocalDateTime.now());
+        Usuario newUsuario = registrar(usuario);
         JsonObject obj = new JsonObject();
-        JsonObject objMailBody = new JsonObject();
-        objMailBody.addProperty("nombreUsuario",
-                extraerNombreUsuario(requestBody.getNombreUsuario()));
-        objMailBody.addProperty("nombres", requestBody.getNombres());
-        objMailBody.addProperty("apellidos", requestBody.getApellidos());
-        objMailBody.addProperty("password", requestBody.getContraseña());
-        obj.addProperty("httpStatus", "VALID_EMAIL");
-        obj.addProperty("emailToFind", requestBody.getNombreUsuario());
-        obj.add("mailBody", objMailBody);
-
-        JsonObject lambdaResponse = lambdaService.validEmailAndRegisterWithLambda(obj.toString());
-        boolean estado = lambdaResponse.get("estado").getAsBoolean();
-        log.info("validEmailWithLambda : " + estado);
-        if (estado) {
-            Usuario usuario = builder.transformFromUserRequestBody(requestBody);
-            usuario.setEliminado(false);
-            usuario.setEstado(false);
-            usuario.setValidado(false);
-            usuario.setFechaCreacion(LocalDateTime.now());
-            Usuario newUsuario = registrar(usuario);
-            log.info("Dentro del if : " + newUsuario);
-            obj = new JsonObject();
-            obj.addProperty("emailFrom", "jbedoyafox@sidetechsolutions.com");
-            obj.addProperty("subject", "Correo de bienvenida");
-            obj.addProperty("emailTo", requestBody.getNombreUsuario());
-            obj.addProperty("content", messagewelcomeHtmlBuilder(newUsuario,
-                    getJwtFromObjectAuthentication(buildBodyForToken(usuario))));
-            JsonElement resultMainSend = lambdaService.mailSendWithLambda(obj.toString())
-                    .get("code");
-            String code = resultMainSend.getAsString();
-            log.info("mailSendWithLambda : " + code);
-            if (code.equals("202")) {
-                return newUsuario;
-            }
-            throw new BadRequestException("Error al enviar el correo de autenticacion !!!!");
-        } else {
-            String mensaje = lambdaResponse.get("mensaje").getAsString();
-            throw new BadRequestException("Email " + requestBody.getNombreUsuario() + mensaje);
+        obj.addProperty("emailFrom", "jbedoyafox@sidetechsolutions.com");
+        obj.addProperty("subject", "Correo de bienvenida");
+        obj.addProperty("emailTo", requestBody.getNombreUsuario());
+        obj.addProperty("content", messagewelcomeHtmlBuilder(newUsuario,
+                getJwtFromObjectAuthentication(buildBodyForToken(usuario))));
+        JsonElement resultMainSend = lambdaService.mailSendWithLambda(obj.toString()).get("code");
+        String code = resultMainSend.getAsString();
+        log.info("mailSendWithLambda : " + code);
+        if (code.equals("202")) {
+            return newUsuario;
         }
+        throw new BadRequestException("Error al enviar el correo de autenticacion !!!!");
     }
 
     @Transactional

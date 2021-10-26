@@ -54,7 +54,7 @@ public class UsuarioServiceImpl extends CrudImpl<Usuario, String> implements Usu
     @Override
     public Usuario buscarPorId(String id) {
         Optional<Usuario> usuarioOptional = verPorId(cleanId(id));
-        if (usuarioOptional.isEmpty()) {
+        if (!usuarioOptional.isPresent()) {
             throw new NotFoundException("Usuario con el ID " + id + " no existe en la BD");
         }
         return usuarioOptional.get();

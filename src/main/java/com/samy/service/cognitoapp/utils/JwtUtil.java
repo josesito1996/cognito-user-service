@@ -47,9 +47,4 @@ public class JwtUtil {
             return new HashMap<String, Object>();
         }
     }
-
-    public static void main(String... args) {
-        System.out.println(decodedJwt(
-                "eyJoZWFkZXIzIjoiV2lpaWlpaWlpaWlpaWlpIiwiaGVhZGVyMiI6IlNpIGxsZWdhcyBoYXN0YSBhcXVpIOGDmijCtNqhYOGDmikiLCJoZWFkZXIxIjoiKCDNocKwIM2cypYgzaHCsCkiLCJBdXRoZW50aWNhdGlvbiI6Ikp3dFRva2VuIiwiYWxnIjoibm9uZSJ9.eyJpc3MiOiJTQU1ZX0FQUExJQ0FUSU9OIiwic3ViIjoiU2FteSBTeXN0ZW0gYXV0aG9yaXphdGlvbiB0b2tlbiBKV1QiLCJhcGVsbGlkb3MiOiJDYXN0aWxsbyBDaGFscXVlIiwiaWQiOiJmZjI5NzFjNy02MDBmLTQ3YjctODA0NC1jYjk5NmQzOTAzZDgiLCJub21icmVzIjoiSm9zZSIsImV4cCI6MTYzMDIxMDU0OX0."));
-    }
 }

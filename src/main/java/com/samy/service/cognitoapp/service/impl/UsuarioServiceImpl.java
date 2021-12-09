@@ -103,10 +103,23 @@ public class UsuarioServiceImpl extends CrudImpl<Usuario, String> implements Usu
     @Override
     public UserResponseBody getUsuarioByUserName(String userName) {
         Usuario usuario = buscarPorNombreUsuario(userName);
+        String nombres = usuario.getNombres();
+        String apellidos = usuario.getApellidos();
+        String nuevoNombre = nombres;
+        String nuevoApellido = apellidos;
+        if (nombres.contains(" ")) {
+        	nuevoNombre = nombres.substring(0,nombres.indexOf(" "));
+        }
+        if (apellidos.contains(" ")) {
+        	nuevoApellido = apellidos.substring(0,apellidos.indexOf(" "));
+        }
         return UserResponseBody
-                .builder().id(usuario.getIdUsuario()).datosUsuario(usuario.getNombres().concat(" ")
-                        .concat(usuario.getApellidos()).toUpperCase())
-                .nombreUsuario(usuario.getNombreUsuario()).build();
+                .builder()
+                .id(usuario.getIdUsuario())
+                .datosUsuario(nuevoNombre.concat(" ")
+                        .concat(nuevoApellido))
+                .nombreUsuario(usuario.getNombreUsuario())
+                .build();
     }
 
     @Override

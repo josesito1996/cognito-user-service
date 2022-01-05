@@ -146,7 +146,7 @@ public class UsuarioServiceImpl extends CrudImpl<Usuario, String> implements Usu
         usuario.setFechaCreacion(LocalDateTime.now());
         Usuario newUsuario = registrar(usuario);
         JsonObject obj = new JsonObject();
-        obj.addProperty("emailFrom", "jbedoyafox@sidetechsolutions.com");
+        obj.addProperty("emailFrom", "notificacion.sami@sidetechsolutions.com");
         obj.addProperty("subject", "Correo de bienvenida");
         obj.addProperty("emailTo", requestBody.getNombreUsuario());
         obj.addProperty("content", messagewelcomeHtmlBuilder(newUsuario,

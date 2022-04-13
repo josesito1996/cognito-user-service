@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.samy.service.cognitoapp.exception.BadRequestException;
 import com.samy.service.cognitoapp.model.ColaboradorTable;
+import com.samy.service.cognitoapp.model.response.UserResponseBody;
 import com.samy.service.cognitoapp.repository.ColaboradorRepo;
 import com.samy.service.cognitoapp.repository.GenericRepo;
 import com.samy.service.cognitoapp.service.ColaboradorService;
@@ -42,6 +43,31 @@ public class ColaboradorServiceImp extends CrudImpl<ColaboradorTable, String> im
 			throw new BadRequestException("Colaborador con id "+ idColaborador + " no existe");
 		}
 		return colaboradorOptional.get();
+	}
+
+	@Override
+	public ColaboradorTable buscarPorCorreo(String correo) {
+		
+		return repo.findOneByCorreo(correo);
+	}
+
+	@Override
+	public UserResponseBody getUsuarioByUserName(String userName) {
+		ColaboradorTable colaborador = buscarPorCorreo(userName);
+		String nombres = colaborador.getNombres();
+		String apellidos = colaborador.getApellidos();
+		String nuevoNombre = nombres;
+		String nuevoApellido = apellidos;
+		if (nombres.contains(" ")) {
+			nuevoNombre = nombres.substring(0, nombres.indexOf(" "));
+		}
+		if (apellidos.contains(" ")) {
+			nuevoApellido = apellidos.substring(0, apellidos.indexOf(" "));
+		}
+		return UserResponseBody.builder().id(colaborador.getIdColaborador())
+				.datosUsuario(nuevoNombre.concat(" ").concat(nuevoApellido)).nombreUsuario(colaborador.getCorreo())
+				.tipo("COLABORADOR")
+				.build();
 	}
 
 }

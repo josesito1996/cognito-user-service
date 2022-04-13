@@ -85,7 +85,9 @@ public class Utils {
 		String urlActivator = "https://79z25zohcj.execute-api.us-east-2.amazonaws.com/dev/token-auth/authenticateColaborator?tokenKey="
 				+ jwt;
 		String htmlText = "<p><strong>Hola : " + colaborador.getNombres() + ";</strong></p>\r\n"
-				+ "<h4>Bienvenido(a) a Samy.</h4>\r\n" + "<h4>Tu password es : " + colaborador.getPassword()
+				+ "<h4>Bienvenido(a) a Samy.</h4>\r\n"
+				+ "<h4>Tu Usuario es : " + colaborador.getCorreo()
+				+"<h4>Tu password es : " + colaborador.getPassword()
 				+ "</h4>\r\n" + "<p>Para poder activar tu cuenta de usuario ingresa al siguiente enlace:</p>\r\n"
 				+ "<p><a title=\"Samy authenticador\" href=" + urlActivator
 				+ " target=\"_blank\">Haz click aqui</a></p>";

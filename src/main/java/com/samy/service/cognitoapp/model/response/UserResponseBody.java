@@ -16,5 +16,7 @@ public class UserResponseBody {
 	private String datosUsuario;
 	
 	private String nombreUsuario;
+	
+	private String tipo;
 
 }

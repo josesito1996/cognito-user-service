@@ -15,6 +15,7 @@ import com.samy.service.cognitoapp.model.request.ColaboratorRequest;
 import com.samy.service.cognitoapp.model.request.UserRequestBody;
 import com.samy.service.cognitoapp.model.response.UserResponseBody;
 import com.samy.service.cognitoapp.service.CognitoService;
+import com.samy.service.cognitoapp.service.ColaboradorService;
 import com.samy.service.cognitoapp.service.UsuarioService;
 
 @RestController
@@ -26,6 +27,9 @@ public class UsuarioController {
 	
 	@Autowired
 	UsuarioService usuarioService;
+	
+	@Autowired
+	ColaboradorService colaboradorService;
 
 	@PostMapping("/createUser")
 	public UserResponseBody crearUsuario(@Valid @RequestBody UserRequestBody request) {
@@ -50,6 +54,14 @@ public class UsuarioController {
 
         return usuarioService.getUsuarioByUserName(userName);
     }
+	
+	
+	@GetMapping("/getColaborator/{userName}")
+    public UserResponseBody verColaboradorPorUserName(@PathVariable String userName) {
+
+        return colaboradorService.getUsuarioByUserName(userName);
+    }
+	
 	
 	@GetMapping("/deleteUser/{userName}")
 	public UserResponseBody eliminarUsuario(@PathVariable String userName) {

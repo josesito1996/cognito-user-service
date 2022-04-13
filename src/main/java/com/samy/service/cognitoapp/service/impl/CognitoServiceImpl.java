@@ -8,10 +8,12 @@ import com.amazonaws.services.cognitoidp.model.AdminDeleteUserResult;
 import com.amazonaws.services.cognitoidp.model.AdminSetUserPasswordResult;
 import com.samy.service.cognitoapp.exception.BadRequestException;
 import com.samy.service.cognitoapp.exception.FoundException;
+import com.samy.service.cognitoapp.model.ColaboradorTable;
 import com.samy.service.cognitoapp.model.Usuario;
 import com.samy.service.cognitoapp.model.request.UserRequestBody;
 import com.samy.service.cognitoapp.model.response.UserResponseBody;
 import com.samy.service.cognitoapp.service.CognitoService;
+import com.samy.service.cognitoapp.service.ColaboradorService;
 import com.samy.service.cognitoapp.service.UsuarioService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -25,6 +27,9 @@ public class CognitoServiceImpl implements CognitoService {
 
     @Autowired
     private UsuarioService usuarioService;
+    
+    @Autowired
+    private ColaboradorService colaboradorService;
 
     @Autowired
     private AWSCognitoIdentityProvider cognitoClient;
@@ -56,18 +61,27 @@ public class CognitoServiceImpl implements CognitoService {
         if (deleteResult.getSdkResponseMetadata().getRequestId() != null) {
 
             usuario.setEstado(false);
-            return new UserResponseBody(usuarioService.modificar(usuario).getIdUsuario(), "", "");
+            return new UserResponseBody(usuarioService.modificar(usuario).getIdUsuario(), "", "","");
         }
-        return new UserResponseBody("Error al Eliminar", "", "");
+        return new UserResponseBody("Error al Eliminar", "", "","");
     }
 
     @Override
     public UserResponseBody registrarUsuarioV2(UserRequestBody body) {
         log.info("CognitoServiceImpl.registrarUsuarioV2");
         log.info("UserRequestBody : " + body.toString());
+        
         AdminSetUserPasswordResult result = builder.addUser(body, cognitoClient);
         if (result.getSdkResponseMetadata() != null) {
             log.info("Dentro " + result);
+            boolean isColaborador = body.getTipo().equals("COLABORADOR");
+            if (isColaborador) {
+            	ColaboradorTable colabordor = colaboradorService.buscarPorCorreo(body.getCorreo());
+            	return UserResponseBody.builder().id(colabordor.getIdUsuario())
+                        .datosUsuario(
+                        		colabordor.getNombres().concat(" ").concat(colabordor.getApellidos()))
+                        .nombreUsuario(colabordor.getCorreo()).build();
+            }
             Usuario userUsuario = usuarioService.buscarPorNombreUsuarioPorCognito(body.getNombreUsuario());
             return UserResponseBody.builder().id(userUsuario.getIdUsuario())
                     .datosUsuario(

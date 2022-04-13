@@ -88,14 +88,13 @@ public class UsuarioServiceImpl extends CrudImpl<Usuario, String> implements Usu
 				.registrar(ColaboradorTable.builder().nombres(request.getNames()).apellidos(request.getLastName())
 						.correo(request.getMail()).password(password.generarPassword()).empresa(usuario.getEmpresa())
 						.idUsuario(usuario.getIdUsuario()).estado(true).validado(false).eliminado(false).build());
-		ColaboradorTable colaboradorNuevo = colaboradorService.registrar(colaborador);
 
 		JsonObject obj = new JsonObject();
 		obj.addProperty("emailFrom", "notificacion.sami@sidetechsolutions.com");
 		obj.addProperty("subject", "Correo de bienvenida");
-		obj.addProperty("emailTo", colaboradorNuevo.getCorreo());
-		obj.addProperty("content", messageWelcomeColaboratorHtmlBuilder(colaboradorNuevo,
-				getJwtFromObjectAuthentication(buildBodyColaboratorForToken(colaboradorNuevo))));
+		obj.addProperty("emailTo", colaborador.getCorreo());
+		obj.addProperty("content", messageWelcomeColaboratorHtmlBuilder(colaborador,
+				getJwtFromObjectAuthentication(buildBodyColaboratorForToken(colaborador))));
 		JsonElement resultMainSend = lambdaService.mailSendWithLambda(obj.toString()).get("code");
 		String code = resultMainSend.getAsString();
 		log.info("mailSendWithLambda : " + code);
@@ -158,6 +157,7 @@ public class UsuarioServiceImpl extends CrudImpl<Usuario, String> implements Usu
 		}
 		return UserResponseBody.builder().id(usuario.getIdUsuario())
 				.datosUsuario(nuevoNombre.concat(" ").concat(nuevoApellido)).nombreUsuario(usuario.getNombreUsuario())
+				.tipo("USUARIO")
 				.build();
 	}
 
@@ -183,7 +183,6 @@ public class UsuarioServiceImpl extends CrudImpl<Usuario, String> implements Usu
 		usuario.setEstado(false);
 		usuario.setValidado(false);
 		usuario.setFechaCreacion(LocalDateTime.now());
-		usuario.setTipo(requestBody.getTipo());
 		Usuario newUsuario = registrar(usuario);
 		JsonObject obj = new JsonObject();
 		obj.addProperty("emailFrom", "notificacion.sami@sidetechsolutions.com");
@@ -272,7 +271,7 @@ public class UsuarioServiceImpl extends CrudImpl<Usuario, String> implements Usu
 		LocalDateTime fechaExp = numberToLocalDateTime(exp);
 		if (fechaExp.isAfter(LocalDateTime.now())) {
 			log.info("fechaExp : " + fechaExp);
-			ColaboradorTable colaboradorTable = colaboradorService.buscarPorId(idColaborador);
+			ColaboradorTable colaboradorTable = colaboradorService.buscarPorId(idColaborador.replace("\"", ""));
 			log.info("Usuario encontrado : " + colaboradorTable.toString());
 			log.info("Usuario validado : " + colaboradorTable.isValidado());
 			if (colaboradorTable.isValidado()) {

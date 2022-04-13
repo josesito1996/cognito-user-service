@@ -72,15 +72,23 @@ public class UsuarioServiceImpl extends CrudImpl<Usuario, String> implements Usu
 
 	@Override
 	public void registrarColaboratorDesdeSami(ColaboratorRequest request) {
+		log.info("registrarColaboratorDesdeSami.request {}",request);
 		Usuario usuario = buscarPorNombreUsuario(request.getUserName());
 		List<ColaboradorTable> colaboradores = colaboradorService.buscarPorIdUsuario(usuario.getIdUsuario());
 		Long countColaboradores = colaboradores.stream().filter(item -> item.getCorreo().equals(request.getMail()))
 				.count();
+		log.info("registrarColaboratorDesdeSami.colaboradores {}", colaboradores);
 		boolean existeColaborador = colaboradorService.colaboradorExiste(request.getMail());
-		if (countColaboradores != 0 && existeColaborador && usuario.getCorreo().equals(request.getMail())) {
+		log.info("registrarColaboratorDesdeSami.existeColaborador {}", existeColaborador);
+		Usuario usuarioEncontrado = buscarPorUserName(request.getMail());
+		log.info("registrarColaboratorDesdeSami.UsuarioEncontrado {}", usuarioEncontrado);
+		if (usuarioEncontrado != null) {
+			throw new BadRequestException(
+					"Ya existe un Usuario con el mismo mail del colaborador : " + request.getUserName());
+		}
+		if (countColaboradores != 0 && existeColaborador) {
 			throw new BadRequestException("Ya existe un colaborador con el mismo UserName : " + request.getUserName());
 		}
-
 		Password password = new Password();
 		password.setLongitud(10);
 		password.setContrasena(request.getMail());

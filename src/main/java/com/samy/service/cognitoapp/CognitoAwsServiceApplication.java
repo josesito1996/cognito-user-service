@@ -19,7 +19,7 @@ public class CognitoAwsServiceApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		usuarioUpdate();
+		// usuarioUpdate();
 	}
 
 	public void usuarioUpdate() {

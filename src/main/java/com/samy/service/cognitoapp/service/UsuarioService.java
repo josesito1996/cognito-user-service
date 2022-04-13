@@ -15,6 +15,8 @@ public interface UsuarioService extends ICrud<Usuario, String> {
 
     public Usuario buscarPorNombreUsuario(String userName);
     
+    public Usuario buscarPorUserName(String userName);
+    
     public Usuario buscarPorUserNameAndEstado(String userName, boolean estado);
     
     public Usuario buscarPorNombreUsuarioPorCognito(String userName);

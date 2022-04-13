@@ -18,16 +18,19 @@ import com.samy.service.cognitoapp.service.CognitoService;
 import com.samy.service.cognitoapp.service.ColaboradorService;
 import com.samy.service.cognitoapp.service.UsuarioService;
 
+import lombok.extern.slf4j.Slf4j;
+
 @RestController
 @RequestMapping("/api-usuario")
+@Slf4j
 public class UsuarioController {
 
 	@Autowired
 	CognitoService cognitoService;
-	
+
 	@Autowired
 	UsuarioService usuarioService;
-	
+
 	@Autowired
 	ColaboradorService colaboradorService;
 
@@ -36,33 +39,34 @@ public class UsuarioController {
 		request.setNombreUsuario(request.getCorreo());
 		return cognitoService.registrarUsuario(request);
 	}
-	
+
 	@PostMapping("/createUserv2")
 	public Usuario createUserV2(@Valid @RequestBody UserRequestBody request) {
-	    request.setNombreUsuario(request.getCorreo());
-	    return usuarioService.registrarUsuarioV2(request);
+		request.setNombreUsuario(request.getCorreo());
+		return usuarioService.registrarUsuarioV2(request);
 	}
-	
+
 	@PostMapping("/addColaborator")
 	public void createColaborator(@Valid @RequestBody ColaboratorRequest request) {
-	    usuarioService.registrarColaboratorDesdeSami(request);
+		usuarioService.registrarColaboratorDesdeSami(request);
 	}
-	
-	
+
 	@GetMapping("/getUser/{userName}")
-    public UserResponseBody verUsuarioPorUserName(@PathVariable String userName) {
+	public UserResponseBody verUsuarioPorUserName(@PathVariable String userName) {
+		log.info("GetUser {}", userName);
+		UserResponseBody responseUsuario = usuarioService.getUsuarioByUserName(userName);
+		log.info("responseUsuario {}", responseUsuario);
+		if (responseUsuario.getId() != null) {
+			return responseUsuario;
+		}
+		UserResponseBody responseColaborador = colaboradorService.getUsuarioByUserName(userName);
+		log.info("responseUsuario {}", responseUsuario);
+		if (responseColaborador.getId() != null) {
+			return responseColaborador;
+		}
+		return new UserResponseBody();
+	}
 
-        return usuarioService.getUsuarioByUserName(userName);
-    }
-	
-	
-	@GetMapping("/getColaborator/{userName}")
-    public UserResponseBody verColaboradorPorUserName(@PathVariable String userName) {
-
-        return colaboradorService.getUsuarioByUserName(userName);
-    }
-	
-	
 	@GetMapping("/deleteUser/{userName}")
 	public UserResponseBody eliminarUsuario(@PathVariable String userName) {
 

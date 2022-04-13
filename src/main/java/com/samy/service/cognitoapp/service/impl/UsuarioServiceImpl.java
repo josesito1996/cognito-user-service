@@ -77,7 +77,7 @@ public class UsuarioServiceImpl extends CrudImpl<Usuario, String> implements Usu
 		Long countColaboradores = colaboradores.stream().filter(item -> item.getCorreo().equals(request.getMail()))
 				.count();
 		boolean existeColaborador = colaboradorService.colaboradorExiste(request.getMail());
-		if (countColaboradores != 0 && existeColaborador) {
+		if (countColaboradores != 0 && existeColaborador && usuario.getCorreo().equals(request.getMail())) {
 			throw new BadRequestException("Ya existe un colaborador con el mismo UserName : " + request.getUserName());
 		}
 
@@ -125,7 +125,7 @@ public class UsuarioServiceImpl extends CrudImpl<Usuario, String> implements Usu
 
 	@Override
 	public Usuario buscarPorNombreUsuario(String userName) {
-		Usuario usuario = repo.findByNombreUsuario(userName);
+		Usuario usuario = buscarPorUserName(userName);
 		if (usuario == null) {
 			throw new NotFoundException("Usuario con el nombre " + userName + " no existe en la base de datos");
 		}
@@ -144,7 +144,10 @@ public class UsuarioServiceImpl extends CrudImpl<Usuario, String> implements Usu
 
 	@Override
 	public UserResponseBody getUsuarioByUserName(String userName) {
-		Usuario usuario = buscarPorNombreUsuario(userName);
+		Usuario usuario = buscarPorUserName(userName);
+		if (usuario == null) {
+			return new UserResponseBody();
+		}
 		String nombres = usuario.getNombres();
 		String apellidos = usuario.getApellidos();
 		String nuevoNombre = nombres;
@@ -157,8 +160,7 @@ public class UsuarioServiceImpl extends CrudImpl<Usuario, String> implements Usu
 		}
 		return UserResponseBody.builder().id(usuario.getIdUsuario())
 				.datosUsuario(nuevoNombre.concat(" ").concat(nuevoApellido)).nombreUsuario(usuario.getNombreUsuario())
-				.tipo("USUARIO")
-				.build();
+				.tipo("USUARIO").build();
 	}
 
 	@Override
@@ -229,8 +231,7 @@ public class UsuarioServiceImpl extends CrudImpl<Usuario, String> implements Usu
 						.registrarUsuarioV2(UserRequestBody.builder().nombres(usuario.getNombres())
 								.apellidos(usuario.getApellidos()).nombreUsuario(usuario.getNombreUsuario())
 								.correo(usuario.getCorreo()).contraseña(usuario.getContrasena()).terminos(true)
-								.tipo("USUARIO")
-								.empresa(usuario.getEmpresa()).colaboradores(null).build());
+								.tipo("USUARIO").empresa(usuario.getEmpresa()).colaboradores(null).build());
 				resultado = response.getId() != null;
 			}
 		} else {
@@ -284,8 +285,7 @@ public class UsuarioServiceImpl extends CrudImpl<Usuario, String> implements Usu
 				UserResponseBody response = cognitoService.registrarUsuarioV2(UserRequestBody.builder()
 						.nombres(colaboradorModified.getNombres()).apellidos(colaboradorModified.getApellidos())
 						.nombreUsuario(colaboradorModified.getCorreo()).correo(colaboradorModified.getCorreo())
-						.contraseña(colaboradorModified.getPassword()).terminos(true)
-						.tipo("COLABORADOR")
+						.contraseña(colaboradorModified.getPassword()).terminos(true).tipo("COLABORADOR")
 						.empresa(colaboradorModified.getEmpresa()).colaboradores(null).build());
 				resultado = response.getId() != null;
 			}
@@ -294,5 +294,10 @@ public class UsuarioServiceImpl extends CrudImpl<Usuario, String> implements Usu
 			throw new BadRequestException("El token ha expirado por favor registrate nuevamente");
 		}
 		return resultado;
+	}
+
+	@Override
+	public Usuario buscarPorUserName(String userName) {
+		return repo.findByNombreUsuario(userName);
 	}
 }

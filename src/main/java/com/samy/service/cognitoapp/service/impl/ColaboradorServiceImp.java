@@ -54,6 +54,9 @@ public class ColaboradorServiceImp extends CrudImpl<ColaboradorTable, String> im
 	@Override
 	public UserResponseBody getUsuarioByUserName(String userName) {
 		ColaboradorTable colaborador = buscarPorCorreo(userName);
+		if (colaborador==null) {
+			return new UserResponseBody();
+		}
 		String nombres = colaborador.getNombres();
 		String apellidos = colaborador.getApellidos();
 		String nuevoNombre = nombres;

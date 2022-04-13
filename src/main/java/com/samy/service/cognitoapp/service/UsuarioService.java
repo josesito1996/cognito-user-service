@@ -1,6 +1,7 @@
 package com.samy.service.cognitoapp.service;
 
 import com.samy.service.cognitoapp.model.Usuario;
+import com.samy.service.cognitoapp.model.request.ColaboratorRequest;
 import com.samy.service.cognitoapp.model.request.UserRequestBody;
 import com.samy.service.cognitoapp.model.response.UserResponseBody;
 
@@ -28,5 +29,9 @@ public interface UsuarioService extends ICrud<Usuario, String> {
     
     public Usuario registrarUsuarioV2(UserRequestBody requestBody);
     
+    public void registrarColaboratorDesdeSami(ColaboratorRequest request);
+    
     public boolean activarUsuario(String tokenKey);
+    
+    public boolean activarColaborador(String tokenKey);
 }

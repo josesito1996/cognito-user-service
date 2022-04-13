@@ -25,4 +25,14 @@ public class TokenController {
             throw new BadRequestException("No de puedo validar el usuario");
         }
     }
+    
+    
+    @GetMapping(path = "/authenticateColaborator")
+    public RedirectView redirectToPageColaborator(@RequestParam String tokenKey) {
+        if (usuarioService.activarColaborador(tokenKey)) {
+            return new RedirectView("https://develop.d1m4mh8zc59yft.amplifyapp.com/");
+        } else {
+            throw new BadRequestException("No de puedo validar el usuario");
+        }
+    }
 }

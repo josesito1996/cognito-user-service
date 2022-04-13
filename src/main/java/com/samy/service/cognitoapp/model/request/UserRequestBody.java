@@ -59,6 +59,10 @@ public class UserRequestBody {
 	@NotNull
 	@NotEmpty
 	private String empresa;
+	
+	@NotNull
+	@NotEmpty
+	private String tipo;
 
 	@Valid
 	private List<ColaboradoresBody> colaboradores;

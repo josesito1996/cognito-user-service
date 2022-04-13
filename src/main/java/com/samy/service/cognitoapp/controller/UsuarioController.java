@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.samy.service.cognitoapp.model.Usuario;
+import com.samy.service.cognitoapp.model.request.ColaboratorRequest;
 import com.samy.service.cognitoapp.model.request.UserRequestBody;
 import com.samy.service.cognitoapp.model.response.UserResponseBody;
 import com.samy.service.cognitoapp.service.CognitoService;
@@ -37,6 +38,12 @@ public class UsuarioController {
 	    request.setNombreUsuario(request.getCorreo());
 	    return usuarioService.registrarUsuarioV2(request);
 	}
+	
+	@PostMapping("/addColaborator")
+	public void createColaborator(@Valid @RequestBody ColaboratorRequest request) {
+	    usuarioService.registrarColaboratorDesdeSami(request);
+	}
+	
 	
 	@GetMapping("/getUser/{userName}")
     public UserResponseBody verUsuarioPorUserName(@PathVariable String userName) {

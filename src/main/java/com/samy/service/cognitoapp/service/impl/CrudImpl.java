@@ -15,21 +15,21 @@ public abstract class CrudImpl<T, ID> implements ICrud<T, ID> {
 	@Override
 	public T registrar(T t) {
 		return getRepo().save(t);
-	};
+	}
 	
 	@Override
 	public T modificar(T t) {
 		return getRepo().save(t);
-	};
+	}
 
 	@Override
 	public List<T> listar() {
 		return StreamSupport.stream(getRepo().findAll().spliterator(), false).collect(Collectors.toList());
-	};
+	}
 
 	@Override
 	public Optional<T> verPorId(ID id) {
 		return getRepo().findById(id);
-	};
+	}
 
 }

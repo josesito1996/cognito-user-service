@@ -14,6 +14,7 @@ public interface ColaboradorService extends ICrud<ColaboradorTable, String> {
 	ColaboradorTable buscarPorId(String idColaborador);
 	
 	boolean colaboradorExiste(String correo);
+	
 	UserResponseBody getUsuarioByUserName(String userName);
 	
 }

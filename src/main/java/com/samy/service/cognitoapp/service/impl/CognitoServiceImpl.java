@@ -97,11 +97,11 @@ public class CognitoServiceImpl implements CognitoService {
 		if (result.getSdkResponseMetadata() == null) {
 			throw new BadRequestException("No se pudo cambiar el Password del usuario : " + request.getUserName());
 		}
-		Usuario userUsuario = usuarioService.buscarPorNombreUsuarioPorCognito(request.getUserName());
-		userUsuario.setContrasena(request.getNewPassword());
-		Usuario userUpdated = usuarioService.modificar(userUsuario);
-		return UserResponseBody.builder().id(userUpdated.getIdUsuario())
-				.datosUsuario(userUpdated.getNombres().concat(" ").concat(userUpdated.getApellidos()))
-				.nombreUsuario(userUpdated.getNombreUsuario()).build();
+		ColaboradorTable colaborador = colaboradorService.buscarPorCorreo(request.getUserName());
+		colaborador.setPassword(request.getNewPassword());
+		ColaboradorTable colaboradorUpdated = colaboradorService.modificar(colaborador);
+		return UserResponseBody.builder().id(colaboradorUpdated.getIdUsuario())
+				.datosUsuario(colaboradorUpdated.getNombres().concat(" ").concat(colaboradorUpdated.getApellidos()))
+				.nombreUsuario(colaboradorUpdated.getCorreo()).build();
 	}
 }

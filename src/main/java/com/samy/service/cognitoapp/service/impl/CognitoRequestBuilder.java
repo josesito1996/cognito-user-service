@@ -12,6 +12,8 @@ import com.amazonaws.services.cognitoidp.model.AdminDeleteUserResult;
 import com.amazonaws.services.cognitoidp.model.AdminSetUserPasswordRequest;
 import com.amazonaws.services.cognitoidp.model.AdminSetUserPasswordResult;
 import com.amazonaws.services.cognitoidp.model.AttributeType;
+import com.amazonaws.services.cognitoidp.model.ChangePasswordRequest;
+import com.amazonaws.services.cognitoidp.model.ChangePasswordResult;
 import com.amazonaws.services.cognitoidp.model.DeliveryMediumType;
 import com.amazonaws.services.cognitoidp.model.MessageActionType;
 import com.samy.service.cognitoapp.model.request.UserRequestBody;
@@ -35,11 +37,26 @@ public class CognitoRequestBuilder {
 		}
 	}
 
+	public ChangePasswordResult changePassword(
+			com.samy.service.cognitoapp.model.request.ChangePasswordRequest requestChange,
+			AWSCognitoIdentityProvider cognitoClient) {
+		try {
+			ChangePasswordRequest request = new ChangePasswordRequest().withAccessToken(requestChange.getToken())
+					.withPreviousPassword(requestChange.getOldPassword())
+					.withProposedPassword(requestChange.getNewPassword());
+			return cognitoClient.changePassword(request);
+		} catch (Exception e) {
+			throw new AWSCognitoIdentityProviderException(e.getMessage());
+		}
+	}
+
 	public AdminSetUserPasswordResult addUser(UserRequestBody request, AWSCognitoIdentityProvider cognitoClient) {
 		try {
 			AttributeType nombres = new AttributeType().withName("custom:nombres").withValue(request.getNombres());
-			AttributeType apellidoPaterno = new AttributeType().withName("custom:apellidoPaterno").withValue(request.getApellidos());
-			AttributeType apellidoMaterno = new AttributeType().withName("custom:apellidoMaterno").withValue(request.getApellidos());
+			AttributeType apellidoPaterno = new AttributeType().withName("custom:apellidoPaterno")
+					.withValue(request.getApellidos());
+			AttributeType apellidoMaterno = new AttributeType().withName("custom:apellidoMaterno")
+					.withValue(request.getApellidos());
 			AttributeType emailAttr = new AttributeType().withName("email").withValue(request.getCorreo());
 			AttributeType emailVerifiedAttr = new AttributeType().withName("email_verified").withValue("true");
 			AdminCreateUserRequest newRequest = new AdminCreateUserRequest().withUserPoolId(userPoolId)

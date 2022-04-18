@@ -6,11 +6,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.samy.service.cognitoapp.model.Usuario;
+import com.samy.service.cognitoapp.model.request.ChangePasswordRequest;
 import com.samy.service.cognitoapp.model.request.ColaboratorRequest;
 import com.samy.service.cognitoapp.model.request.UserRequestBody;
 import com.samy.service.cognitoapp.model.response.UserResponseBody;
@@ -44,6 +46,11 @@ public class UsuarioController {
 	public Usuario createUserV2(@Valid @RequestBody UserRequestBody request) {
 		request.setNombreUsuario(request.getCorreo());
 		return usuarioService.registrarUsuarioV2(request);
+	}
+	
+	@PutMapping("/changePassword")
+	public void updateUser(@Valid @RequestBody ChangePasswordRequest request) {
+		cognitoService.cambiarPasswordUsuario(request);
 	}
 
 	@PostMapping("/addColaborator")

@@ -55,4 +55,7 @@ public class ColaboradorTable implements Serializable {
 	
 	@DynamoDBAttribute
     private boolean validado;
+	
+	@DynamoDBAttribute
+	private boolean passwordChanged;
 }

@@ -70,6 +70,7 @@ public class ColaboradorServiceImp extends CrudImpl<ColaboradorTable, String> im
 		return UserResponseBody.builder().id(colaborador.getIdColaborador())
 				.datosUsuario(nuevoNombre.concat(" ").concat(nuevoApellido)).nombreUsuario(colaborador.getCorreo())
 				.tipo("COLABORADOR")
+				.claveCambiada(colaborador.isPasswordChanged())
 				.build();
 	}
 

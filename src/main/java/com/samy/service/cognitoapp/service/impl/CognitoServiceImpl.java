@@ -61,9 +61,9 @@ public class CognitoServiceImpl implements CognitoService {
 		if (deleteResult.getSdkResponseMetadata().getRequestId() != null) {
 
 			usuario.setEstado(false);
-			return new UserResponseBody(usuarioService.modificar(usuario).getIdUsuario(), "", "", "");
+			return new UserResponseBody(usuarioService.modificar(usuario).getIdUsuario(), "", "", "",true);
 		}
-		return new UserResponseBody("Error al Eliminar", "", "", "");
+		return new UserResponseBody("Error al Eliminar", "", "", "",true);
 	}
 
 	@Override
@@ -99,6 +99,7 @@ public class CognitoServiceImpl implements CognitoService {
 		}
 		ColaboradorTable colaborador = colaboradorService.buscarPorCorreo(request.getUserName());
 		colaborador.setPassword(request.getNewPassword());
+		colaborador.setPasswordChanged(true);
 		ColaboradorTable colaboradorUpdated = colaboradorService.modificar(colaborador);
 		return UserResponseBody.builder().id(colaboradorUpdated.getIdUsuario())
 				.datosUsuario(colaboradorUpdated.getNombres().concat(" ").concat(colaboradorUpdated.getApellidos()))

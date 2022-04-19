@@ -95,7 +95,9 @@ public class UsuarioServiceImpl extends CrudImpl<Usuario, String> implements Usu
 		ColaboradorTable colaborador = colaboradorService
 				.registrar(ColaboradorTable.builder().nombres(request.getNames()).apellidos(request.getLastName())
 						.correo(request.getMail()).password(password.generarPassword()).empresa(usuario.getEmpresa())
-						.idUsuario(usuario.getIdUsuario()).estado(true).validado(false).eliminado(false).build());
+						.idUsuario(usuario.getIdUsuario())
+						.passwordChanged(false)
+						.estado(true).validado(false).eliminado(false).build());
 
 		JsonObject obj = new JsonObject();
 		obj.addProperty("emailFrom", "notificacion.sami@sidetechsolutions.com");
@@ -168,6 +170,7 @@ public class UsuarioServiceImpl extends CrudImpl<Usuario, String> implements Usu
 		}
 		return UserResponseBody.builder().id(usuario.getIdUsuario())
 				.datosUsuario(nuevoNombre.concat(" ").concat(nuevoApellido)).nombreUsuario(usuario.getNombreUsuario())
+				.claveCambiada(true)
 				.tipo("USUARIO").build();
 	}
 

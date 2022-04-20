@@ -96,6 +96,7 @@ public class UsuarioServiceImpl extends CrudImpl<Usuario, String> implements Usu
 				.registrar(ColaboradorTable.builder().nombres(request.getNames()).apellidos(request.getLastName())
 						.correo(request.getMail()).password(password.generarPassword()).empresa(usuario.getEmpresa())
 						.idUsuario(usuario.getIdUsuario())
+						.fechaRegistro(LocalDateTime.now())
 						.passwordChanged(false)
 						.estado(true).validado(false).eliminado(false).build());
 

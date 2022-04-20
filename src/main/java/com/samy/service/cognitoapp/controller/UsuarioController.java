@@ -15,6 +15,7 @@ import com.samy.service.cognitoapp.model.Usuario;
 import com.samy.service.cognitoapp.model.request.ChangePasswordRequest;
 import com.samy.service.cognitoapp.model.request.ColaboratorRequest;
 import com.samy.service.cognitoapp.model.request.UserRequestBody;
+import com.samy.service.cognitoapp.model.response.ColaboradorResponse;
 import com.samy.service.cognitoapp.model.response.UserResponseBody;
 import com.samy.service.cognitoapp.service.CognitoService;
 import com.samy.service.cognitoapp.service.ColaboradorService;
@@ -40,6 +41,18 @@ public class UsuarioController {
 	public UserResponseBody crearUsuario(@Valid @RequestBody UserRequestBody request) {
 		request.setNombreUsuario(request.getCorreo());
 		return cognitoService.registrarUsuario(request);
+	}
+	
+	@GetMapping("/viewByUserName/{userName}")
+	public Usuario findByUserName(@PathVariable String userName) {
+		return usuarioService.buscarPorCorreo(userName);
+	}
+	
+	@GetMapping("/viewColaboratorByUserName/{userName}")
+	public ColaboradorResponse findColaboratorByUserName(@PathVariable String userName) {
+		ColaboradorResponse response = colaboradorService.buscarPorUserName(userName);
+		response.setUserName(usuarioService.buscarPorId(response.getIdUsuario()).getNombreUsuario());
+		return response;
 	}
 
 	@PostMapping("/createUserv2")

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.samy.service.cognitoapp.exception.BadRequestException;
 import com.samy.service.cognitoapp.model.ColaboradorTable;
+import com.samy.service.cognitoapp.model.response.ColaboradorResponse;
 import com.samy.service.cognitoapp.model.response.UserResponseBody;
 import com.samy.service.cognitoapp.repository.ColaboradorRepo;
 import com.samy.service.cognitoapp.repository.GenericRepo;
@@ -71,6 +72,25 @@ public class ColaboradorServiceImp extends CrudImpl<ColaboradorTable, String> im
 				.datosUsuario(nuevoNombre.concat(" ").concat(nuevoApellido)).nombreUsuario(colaborador.getCorreo())
 				.tipo("COLABORADOR")
 				.claveCambiada(colaborador.isPasswordChanged())
+				.build();
+	}
+
+	@Override
+	public ColaboradorResponse buscarPorUserName(String userName) {
+		ColaboradorTable colaborador = buscarPorCorreo(userName);
+		return ColaboradorResponse.builder()
+				.idColaborador(colaborador.getIdColaborador())
+				.nombres(colaborador.getNombres())
+				.apellidos(colaborador.getApellidos())
+				.correo(colaborador.getCorreo())
+				.password(colaborador.getPassword())
+				.empresa(colaborador.getEmpresa())
+				.idUsuario(colaborador.getIdUsuario())
+				.estado(colaborador.isEstado())
+				.eliminado(colaborador.isEliminado())
+				.validado(colaborador.isValidado())
+				.fechaRegistro(colaborador.getFechaRegistro())
+				.passwordChanged(colaborador.isPasswordChanged())
 				.build();
 	}
 

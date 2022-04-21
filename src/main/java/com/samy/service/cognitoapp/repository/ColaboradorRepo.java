@@ -12,5 +12,4 @@ public interface ColaboradorRepo extends GenericRepo<ColaboradorTable,String> {
 	List<ColaboradorTable> findByIdUsuario(String idUsuario);
 	
 	ColaboradorTable findOneByCorreo(String correo);
-	
 }

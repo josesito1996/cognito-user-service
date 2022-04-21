@@ -1,5 +1,7 @@
 package com.samy.service.cognitoapp.controller;
 
+import java.util.List;
+
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,6 +56,13 @@ public class UsuarioController {
 		response.setUserName(usuarioService.buscarPorId(response.getIdUsuario()).getNombreUsuario());
 		return response;
 	}
+	
+	@GetMapping("/findColaboratorsByUserName/{userName}")
+	public List<String> findColaboratorsByUserName(@PathVariable String userName) {
+		Usuario usuario = usuarioService.buscarPorNombreUsuario(userName);
+		return colaboradorService.colaboradoresPorUsuario(usuario.getIdUsuario());
+	}
+	
 
 	@PostMapping("/createUserv2")
 	public Usuario createUserV2(@Valid @RequestBody UserRequestBody request) {

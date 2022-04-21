@@ -20,4 +20,6 @@ public interface ColaboradorService extends ICrud<ColaboradorTable, String> {
 	
 	UserResponseBody getUsuarioByUserName(String userName);
 	
+	List<String> colaboradoresPorUsuario(String idUsuario);
+	
 }

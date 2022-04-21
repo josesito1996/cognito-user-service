@@ -2,6 +2,7 @@ package com.samy.service.cognitoapp.service.impl;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -41,21 +42,21 @@ public class ColaboradorServiceImp extends CrudImpl<ColaboradorTable, String> im
 	public ColaboradorTable buscarPorId(String idColaborador) {
 		Optional<ColaboradorTable> colaboradorOptional = verPorId(idColaborador);
 		if (colaboradorOptional.isEmpty()) {
-			throw new BadRequestException("Colaborador con id "+ idColaborador + " no existe");
+			throw new BadRequestException("Colaborador con id " + idColaborador + " no existe");
 		}
 		return colaboradorOptional.get();
 	}
 
 	@Override
 	public ColaboradorTable buscarPorCorreo(String correo) {
-		
+
 		return repo.findOneByCorreo(correo);
 	}
 
 	@Override
 	public UserResponseBody getUsuarioByUserName(String userName) {
 		ColaboradorTable colaborador = buscarPorCorreo(userName);
-		if (colaborador==null) {
+		if (colaborador == null) {
 			return new UserResponseBody();
 		}
 		String nombres = colaborador.getNombres();
@@ -70,28 +71,24 @@ public class ColaboradorServiceImp extends CrudImpl<ColaboradorTable, String> im
 		}
 		return UserResponseBody.builder().id(colaborador.getIdColaborador())
 				.datosUsuario(nuevoNombre.concat(" ").concat(nuevoApellido)).nombreUsuario(colaborador.getCorreo())
-				.tipo("COLABORADOR")
-				.claveCambiada(colaborador.isPasswordChanged())
-				.build();
+				.tipo("COLABORADOR").claveCambiada(colaborador.isPasswordChanged()).build();
 	}
 
 	@Override
 	public ColaboradorResponse buscarPorUserName(String userName) {
 		ColaboradorTable colaborador = buscarPorCorreo(userName);
-		return ColaboradorResponse.builder()
-				.idColaborador(colaborador.getIdColaborador())
-				.nombres(colaborador.getNombres())
-				.apellidos(colaborador.getApellidos())
-				.correo(colaborador.getCorreo())
-				.password(colaborador.getPassword())
-				.empresa(colaborador.getEmpresa())
-				.idUsuario(colaborador.getIdUsuario())
-				.estado(colaborador.isEstado())
-				.eliminado(colaborador.isEliminado())
-				.validado(colaborador.isValidado())
-				.fechaRegistro(colaborador.getFechaRegistro())
-				.passwordChanged(colaborador.isPasswordChanged())
-				.build();
+		return ColaboradorResponse.builder().idColaborador(colaborador.getIdColaborador())
+				.nombres(colaborador.getNombres()).apellidos(colaborador.getApellidos()).correo(colaborador.getCorreo())
+				.password(colaborador.getPassword()).empresa(colaborador.getEmpresa())
+				.idUsuario(colaborador.getIdUsuario()).estado(colaborador.isEstado())
+				.eliminado(colaborador.isEliminado()).validado(colaborador.isValidado())
+				.fechaRegistro(colaborador.getFechaRegistro()).passwordChanged(colaborador.isPasswordChanged()).build();
+	}
+
+	@Override
+	public List<String> colaboradoresPorUsuario(String idUsuario) {
+		List<ColaboradorTable> colaboradores = repo.findByIdUsuario(idUsuario);
+		return colaboradores.stream().map(ColaboradorTable::getCorreo).collect(Collectors.toList());
 	}
 
 }

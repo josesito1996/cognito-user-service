@@ -14,6 +14,7 @@ import lombok.ToString;
 
 @AllArgsConstructor
 @Builder
+@DynamoDBDocument
 @Getter
 @NoArgsConstructor
 @Setter
@@ -22,7 +23,9 @@ public class Colaborador implements Serializable {
 
 	private static final long serialVersionUID = -7766392681747261246L;
 
+	@DynamoDBAttribute
 	private String nombre;
 
+	@DynamoDBAttribute
 	private String correo;
 }

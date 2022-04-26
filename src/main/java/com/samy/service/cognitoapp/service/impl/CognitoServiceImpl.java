@@ -61,9 +61,10 @@ public class CognitoServiceImpl implements CognitoService {
 		if (deleteResult.getSdkResponseMetadata().getRequestId() != null) {
 
 			usuario.setEstado(false);
-			return new UserResponseBody(usuarioService.modificar(usuario).getIdUsuario(), "", "", "",true);
+			return new UserResponseBody(usuarioService.modificar(usuario).getIdUsuario(), "", "", "", usuario.getRol(),
+					true);
 		}
-		return new UserResponseBody("Error al Eliminar", "", "", "",true);
+		return new UserResponseBody("Error al Eliminar", "", "", "", usuario.getRol(), true);
 	}
 
 	@Override

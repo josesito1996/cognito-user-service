@@ -68,6 +68,9 @@ public class Usuario {
 	@DynamoDBAttribute
     private boolean validado;
 	
+	@DynamoDBAttribute
+	private String rol;
+	
 	/**
 	 * Tipo: 
 	 * usuario -> usuario normal

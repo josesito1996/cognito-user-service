@@ -19,6 +19,8 @@ public class UserResponseBody {
 	
 	private String tipo;
 	
+	private String rol;
+	
 	private boolean claveCambiada;
 
 }

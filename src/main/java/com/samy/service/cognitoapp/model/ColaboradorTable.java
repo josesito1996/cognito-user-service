@@ -65,5 +65,8 @@ public class ColaboradorTable implements Serializable {
 	private LocalDateTime fechaRegistro;
 	
 	@DynamoDBAttribute
+	private String rol;
+	
+	@DynamoDBAttribute
 	private boolean passwordChanged;
 }

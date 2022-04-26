@@ -5,6 +5,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import com.samy.service.cognitoapp.service.ColaboradorService;
 import com.samy.service.cognitoapp.service.UsuarioService;
 
 @SpringBootApplication
@@ -12,6 +13,9 @@ public class CognitoAwsServiceApplication implements CommandLineRunner {
 
 	@Autowired
 	private UsuarioService usuarioService;
+	
+	@Autowired
+	private ColaboradorService colaboradorService;
 
 	public static void main(String[] args) {
 		SpringApplication.run(CognitoAwsServiceApplication.class, args);
@@ -19,13 +23,20 @@ public class CognitoAwsServiceApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		//usuarioUpdate();
+		// usuarioUpdate();
+		// colaboradorUpdate();
 	}
 
 	public void usuarioUpdate() {
 		usuarioService.listar().forEach(item -> {
-			item.setTipo("USUARIO");
+			item.setRol("ADMIN");
 			usuarioService.modificar(item);
+		});
+	}
+	public void colaboradorUpdate() {
+		colaboradorService.listar().forEach(item -> {
+			item.setRol("COLABORADOR");
+			colaboradorService.modificar(item);
 		});
 	}
 }

@@ -3,6 +3,8 @@ package com.samy.service.cognitoapp.utils;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -126,4 +128,14 @@ public class Utils {
 	 * 
 	 * }
 	 **/
+	
+	public static String formatoFecha(LocalDateTime fecha) {
+		return fecha.format(DateTimeFormatter
+			    .ofLocalizedDate(FormatStyle.SHORT));
+	}
+	
+	public static String formatoHora(LocalDateTime fecha) {
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+		return fecha.format(formatter);
+	}
 }

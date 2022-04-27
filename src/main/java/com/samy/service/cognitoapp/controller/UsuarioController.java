@@ -17,6 +17,7 @@ import com.samy.service.cognitoapp.model.Usuario;
 import com.samy.service.cognitoapp.model.request.ChangePasswordRequest;
 import com.samy.service.cognitoapp.model.request.ColaboratorRequest;
 import com.samy.service.cognitoapp.model.request.UserRequestBody;
+import com.samy.service.cognitoapp.model.response.ColaboradorAdminReponse;
 import com.samy.service.cognitoapp.model.response.ColaboradorResponse;
 import com.samy.service.cognitoapp.model.response.UserResponseBody;
 import com.samy.service.cognitoapp.service.CognitoService;
@@ -95,11 +96,16 @@ public class UsuarioController {
 		}
 		return new UserResponseBody();
 	}
-
 	@GetMapping("/deleteUser/{userName}")
 	public UserResponseBody eliminarUsuario(@PathVariable String userName) {
 
 		return cognitoService.eliminarUsuario(userName);
+	}
+	
+	@GetMapping("/viewPanelColaboratorByUserName/{userName}")
+	public List<ColaboradorAdminReponse> panelColaboradoresPorUsuario(@PathVariable String userName){
+		UserResponseBody usuario = usuarioService.getUsuarioByUserName(userName);
+		return colaboradorService.panelColaboradoresPorUsuario(usuario.getId());
 	}
 
 }

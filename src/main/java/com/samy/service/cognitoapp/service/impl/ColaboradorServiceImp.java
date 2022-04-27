@@ -1,5 +1,9 @@
 package com.samy.service.cognitoapp.service.impl;
 
+import static com.samy.service.cognitoapp.utils.Utils.formatoFecha;
+import static com.samy.service.cognitoapp.utils.Utils.formatoHora;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -9,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import com.samy.service.cognitoapp.exception.BadRequestException;
 import com.samy.service.cognitoapp.model.ColaboradorTable;
+import com.samy.service.cognitoapp.model.response.ColaboradorAdminReponse;
 import com.samy.service.cognitoapp.model.response.ColaboradorResponse;
 import com.samy.service.cognitoapp.model.response.UserResponseBody;
 import com.samy.service.cognitoapp.repository.ColaboradorRepo;
@@ -89,6 +94,24 @@ public class ColaboradorServiceImp extends CrudImpl<ColaboradorTable, String> im
 	public List<String> colaboradoresPorUsuario(String idUsuario) {
 		List<ColaboradorTable> colaboradores = repo.findByIdUsuario(idUsuario);
 		return colaboradores.stream().map(ColaboradorTable::getCorreo).collect(Collectors.toList());
+	}
+
+	@Override
+	public List<ColaboradorAdminReponse> panelColaboradoresPorUsuario(String idUsuario) {
+
+		List<ColaboradorTable> colaboradores = repo.findByIdUsuario(idUsuario);
+		return colaboradores.stream().map(colaborador -> {
+			return ColaboradorAdminReponse.builder()
+					.id(colaborador.getIdColaborador())
+					.datos(colaborador.getNombres().concat(" ").concat(colaborador.getApellidos()))
+					.userName(colaborador.getCorreo())
+					.fechaRegistro(formatoFecha(colaborador.getFechaRegistro()))
+					.horaRegistro(formatoHora(colaborador.getFechaRegistro()))
+					.rol(colaborador.getRol())
+					.estado(colaborador.isEstado())
+					.accesos(new ArrayList<>())
+					.build();
+		}).collect(Collectors.toList());
 	}
 
 }

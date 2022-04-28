@@ -10,9 +10,11 @@ import static com.samy.service.cognitoapp.utils.Utils.messageWelcomeColaboratorH
 import static com.samy.service.cognitoapp.utils.Utils.numberToLocalDateTime;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,6 +36,7 @@ import com.samy.service.cognitoapp.service.ColaboradorService;
 import com.samy.service.cognitoapp.service.LambdaService;
 import com.samy.service.cognitoapp.service.UsuarioService;
 import com.samy.service.cognitoapp.utils.Password;
+import com.samy.service.cognitoapp.utils.Utils;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -72,7 +75,7 @@ public class UsuarioServiceImpl extends CrudImpl<Usuario, String> implements Usu
 
 	@Override
 	public void registrarColaboratorDesdeSami(ColaboratorRequest request) {
-		log.info("registrarColaboratorDesdeSami.request {}",request);
+		log.info("registrarColaboratorDesdeSami.request {}", request);
 		Usuario usuario = buscarPorNombreUsuario(request.getUserName());
 		List<ColaboradorTable> colaboradores = colaboradorService.buscarPorIdUsuario(usuario.getIdUsuario());
 		Long countColaboradores = colaboradores.stream().filter(item -> item.getCorreo().equals(request.getMail()))
@@ -95,9 +98,8 @@ public class UsuarioServiceImpl extends CrudImpl<Usuario, String> implements Usu
 		ColaboradorTable colaborador = colaboradorService
 				.registrar(ColaboradorTable.builder().nombres(request.getNames()).apellidos(request.getLastName())
 						.correo(request.getMail()).password(password.generarPassword()).empresa(usuario.getEmpresa())
-						.idUsuario(usuario.getIdUsuario())
-						.fechaRegistro(LocalDateTime.now())
-						.passwordChanged(false)
+						.idUsuario(usuario.getIdUsuario()).fechaRegistro(LocalDateTime.now()).passwordChanged(false)
+						.accesos(new ArrayList<>())
 						.estado(true).validado(false).eliminado(false).build());
 
 		JsonObject obj = new JsonObject();
@@ -171,8 +173,8 @@ public class UsuarioServiceImpl extends CrudImpl<Usuario, String> implements Usu
 		}
 		return UserResponseBody.builder().id(usuario.getIdUsuario())
 				.datosUsuario(nuevoNombre.concat(" ").concat(nuevoApellido)).nombreUsuario(usuario.getNombreUsuario())
-				.claveCambiada(true)
-				.rol(usuario.getRol())
+				.claveCambiada(true).rol(usuario.getRol()).accesos(usuario.getAccesos().stream()
+						.map(item -> Utils.transformToModulo(item)).collect(Collectors.toList()))
 				.tipo("USUARIO").build();
 	}
 
@@ -198,6 +200,7 @@ public class UsuarioServiceImpl extends CrudImpl<Usuario, String> implements Usu
 		usuario.setEstado(false);
 		usuario.setValidado(false);
 		usuario.setFechaCreacion(LocalDateTime.now());
+		usuario.setAccesos(new ArrayList<>());
 		Usuario newUsuario = registrar(usuario);
 		JsonObject obj = new JsonObject();
 		obj.addProperty("emailFrom", "notificacion.sami@sidetechsolutions.com");

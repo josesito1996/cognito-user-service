@@ -1,5 +1,7 @@
 package com.samy.service.cognitoapp.model.response;
 
+import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -22,5 +24,7 @@ public class UserResponseBody {
 	private String rol;
 	
 	private boolean claveCambiada;
+	
+	List<ModuloResponse> accesos;
 
 }

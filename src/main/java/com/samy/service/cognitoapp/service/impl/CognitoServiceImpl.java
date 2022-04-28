@@ -1,5 +1,7 @@
 package com.samy.service.cognitoapp.service.impl;
 
+import java.util.ArrayList;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -62,9 +64,9 @@ public class CognitoServiceImpl implements CognitoService {
 
 			usuario.setEstado(false);
 			return new UserResponseBody(usuarioService.modificar(usuario).getIdUsuario(), "", "", "", usuario.getRol(),
-					true);
+					true, new ArrayList<>());
 		}
-		return new UserResponseBody("Error al Eliminar", "", "", "", usuario.getRol(), true);
+		return new UserResponseBody("Error al Eliminar", "", "", "", usuario.getRol(), true, new ArrayList<>());
 	}
 
 	@Override

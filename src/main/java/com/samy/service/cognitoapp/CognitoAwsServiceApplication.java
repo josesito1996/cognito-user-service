@@ -1,5 +1,7 @@
 package com.samy.service.cognitoapp;
 
+import java.util.ArrayList;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -23,19 +25,21 @@ public class CognitoAwsServiceApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		// usuarioUpdate();
-		// colaboradorUpdate();
+		//usuarioUpdate();
+		//colaboradorUpdate();
 	}
 
 	public void usuarioUpdate() {
 		usuarioService.listar().forEach(item -> {
-			item.setRol("ADMIN");
+			//item.setRol("ADMIN");
+			item.setAccesos(new ArrayList<>());
 			usuarioService.modificar(item);
 		});
 	}
 	public void colaboradorUpdate() {
 		colaboradorService.listar().forEach(item -> {
-			item.setRol("COLABORADOR");
+			//item.setRol("COLABORADOR");
+			item.setAccesos(new ArrayList<>());
 			colaboradorService.modificar(item);
 		});
 	}

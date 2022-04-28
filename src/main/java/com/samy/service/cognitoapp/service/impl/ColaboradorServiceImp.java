@@ -19,6 +19,7 @@ import com.samy.service.cognitoapp.model.response.UserResponseBody;
 import com.samy.service.cognitoapp.repository.ColaboradorRepo;
 import com.samy.service.cognitoapp.repository.GenericRepo;
 import com.samy.service.cognitoapp.service.ColaboradorService;
+import com.samy.service.cognitoapp.utils.Utils;
 
 @Service
 public class ColaboradorServiceImp extends CrudImpl<ColaboradorTable, String> implements ColaboradorService {
@@ -76,6 +77,8 @@ public class ColaboradorServiceImp extends CrudImpl<ColaboradorTable, String> im
 		}
 		return UserResponseBody.builder().id(colaborador.getIdColaborador())
 				.datosUsuario(nuevoNombre.concat(" ").concat(nuevoApellido)).nombreUsuario(colaborador.getCorreo())
+				.accesos(colaborador.getAccesos().stream().map(item -> Utils.transformToModulo(item))
+						.collect(Collectors.toList()))
 				.tipo("COLABORADOR").claveCambiada(colaborador.isPasswordChanged()).build();
 	}
 
@@ -101,16 +104,11 @@ public class ColaboradorServiceImp extends CrudImpl<ColaboradorTable, String> im
 
 		List<ColaboradorTable> colaboradores = repo.findByIdUsuario(idUsuario);
 		return colaboradores.stream().map(colaborador -> {
-			return ColaboradorAdminReponse.builder()
-					.id(colaborador.getIdColaborador())
+			return ColaboradorAdminReponse.builder().id(colaborador.getIdColaborador())
 					.datos(colaborador.getNombres().concat(" ").concat(colaborador.getApellidos()))
-					.userName(colaborador.getCorreo())
-					.fechaRegistro(formatoFecha(colaborador.getFechaRegistro()))
-					.horaRegistro(formatoHora(colaborador.getFechaRegistro()))
-					.rol(colaborador.getRol())
-					.estado(colaborador.isEstado())
-					.accesos(new ArrayList<>())
-					.build();
+					.userName(colaborador.getCorreo()).fechaRegistro(formatoFecha(colaborador.getFechaRegistro()))
+					.horaRegistro(formatoHora(colaborador.getFechaRegistro())).rol(colaborador.getRol())
+					.estado(colaborador.isEstado()).accesos(new ArrayList<>()).build();
 		}).collect(Collectors.toList());
 	}
 

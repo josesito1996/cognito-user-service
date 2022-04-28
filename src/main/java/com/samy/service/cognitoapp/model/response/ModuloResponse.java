@@ -20,6 +20,8 @@ public class ModuloResponse implements Serializable{
 
 	private static final long serialVersionUID = -3959603794683150343L;
 	
+	private String name;
+	
 	private String path;
 	
 }

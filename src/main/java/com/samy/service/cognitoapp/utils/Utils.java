@@ -10,7 +10,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.samy.service.cognitoapp.model.ColaboradorTable;
+import com.samy.service.cognitoapp.model.Modulo;
 import com.samy.service.cognitoapp.model.Usuario;
+import com.samy.service.cognitoapp.model.response.ModuloResponse;
 
 public class Utils {
 
@@ -94,6 +96,13 @@ public class Utils {
 				+ "<p><a title=\"Samy authenticador\" href=" + urlActivator
 				+ " target=\"_blank\">Haz click aqui</a></p>";
 		return htmlText;
+	}
+	
+	public static ModuloResponse transformToModulo(Modulo modulo){
+		return ModuloResponse.builder()
+				.name(modulo.getName())
+				.path(modulo.getPath())
+				.build();
 	}
 
 	public static Map<String, Object> buildBodyForToken(Usuario usuario) {

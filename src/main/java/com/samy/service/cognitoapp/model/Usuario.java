@@ -79,4 +79,7 @@ public class Usuario {
 	 */
 	@DynamoDBAttribute
 	private String tipo;
+	
+	@DynamoDBAttribute
+	private List<Modulo> accesos;
 }

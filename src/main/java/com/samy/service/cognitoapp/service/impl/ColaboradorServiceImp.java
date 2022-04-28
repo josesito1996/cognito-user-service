@@ -3,7 +3,6 @@ package com.samy.service.cognitoapp.service.impl;
 import static com.samy.service.cognitoapp.utils.Utils.formatoFecha;
 import static com.samy.service.cognitoapp.utils.Utils.formatoHora;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -108,7 +107,9 @@ public class ColaboradorServiceImp extends CrudImpl<ColaboradorTable, String> im
 					.datos(colaborador.getNombres().concat(" ").concat(colaborador.getApellidos()))
 					.userName(colaborador.getCorreo()).fechaRegistro(formatoFecha(colaborador.getFechaRegistro()))
 					.horaRegistro(formatoHora(colaborador.getFechaRegistro())).rol(colaborador.getRol())
-					.estado(colaborador.isEstado()).accesos(new ArrayList<>()).build();
+					.estado(colaborador.isEstado()).accesos(colaborador.getAccesos().stream()
+							.map(item -> Utils.transformToModulo(item)).collect(Collectors.toList()))
+					.build();
 		}).collect(Collectors.toList());
 	}
 

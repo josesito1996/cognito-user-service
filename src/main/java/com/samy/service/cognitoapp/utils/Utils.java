@@ -12,6 +12,7 @@ import java.util.Map;
 import com.samy.service.cognitoapp.model.ColaboradorTable;
 import com.samy.service.cognitoapp.model.Modulo;
 import com.samy.service.cognitoapp.model.Usuario;
+import com.samy.service.cognitoapp.model.request.AccesoRequest;
 import com.samy.service.cognitoapp.model.response.ModuloResponse;
 
 public class Utils {
@@ -102,6 +103,13 @@ public class Utils {
 		return ModuloResponse.builder()
 				.name(modulo.getName())
 				.path(modulo.getPath())
+				.build();
+	}
+	
+	public static Modulo transformToModulo(AccesoRequest request) {
+		return Modulo.builder()
+				.name(request.getName())
+				.path(request.getPath())
 				.build();
 	}
 

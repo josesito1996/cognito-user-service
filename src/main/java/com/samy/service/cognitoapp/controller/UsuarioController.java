@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.samy.service.cognitoapp.model.Usuario;
 import com.samy.service.cognitoapp.model.request.ChangePasswordRequest;
+import com.samy.service.cognitoapp.model.request.ColaboradorAccesoRequest;
 import com.samy.service.cognitoapp.model.request.ColaboratorRequest;
 import com.samy.service.cognitoapp.model.request.UserRequestBody;
 import com.samy.service.cognitoapp.model.response.ColaboradorAdminReponse;
@@ -45,32 +46,31 @@ public class UsuarioController {
 		request.setNombreUsuario(request.getCorreo());
 		return cognitoService.registrarUsuario(request);
 	}
-	
+
 	@GetMapping("/viewByUserName/{userName}")
 	public Usuario findByUserName(@PathVariable String userName) {
 		return usuarioService.buscarPorCorreo(userName);
 	}
-	
+
 	@GetMapping("/viewColaboratorByUserName/{userName}")
 	public ColaboradorResponse findColaboratorByUserName(@PathVariable String userName) {
 		ColaboradorResponse response = colaboradorService.buscarPorUserName(userName);
 		response.setUserName(usuarioService.buscarPorId(response.getIdUsuario()).getNombreUsuario());
 		return response;
 	}
-	
+
 	@GetMapping("/findColaboratorsByUserName/{userName}")
 	public List<String> findColaboratorsByUserName(@PathVariable String userName) {
 		Usuario usuario = usuarioService.buscarPorNombreUsuario(userName);
 		return colaboradorService.colaboradoresPorUsuario(usuario.getIdUsuario());
 	}
-	
 
 	@PostMapping("/createUserv2")
 	public Usuario createUserV2(@Valid @RequestBody UserRequestBody request) {
 		request.setNombreUsuario(request.getCorreo());
 		return usuarioService.registrarUsuarioV2(request);
 	}
-	
+
 	@PutMapping("/changePassword")
 	public void updateUser(@Valid @RequestBody ChangePasswordRequest request) {
 		cognitoService.cambiarPasswordUsuario(request);
@@ -96,16 +96,22 @@ public class UsuarioController {
 		}
 		return new UserResponseBody();
 	}
+
 	@GetMapping("/deleteUser/{userName}")
 	public UserResponseBody eliminarUsuario(@PathVariable String userName) {
 
 		return cognitoService.eliminarUsuario(userName);
 	}
-	
+
 	@GetMapping("/viewPanelColaboratorByUserName/{userName}")
-	public List<ColaboradorAdminReponse> panelColaboradoresPorUsuario(@PathVariable String userName){
+	public List<ColaboradorAdminReponse> panelColaboradoresPorUsuario(@PathVariable String userName) {
 		UserResponseBody usuario = usuarioService.getUsuarioByUserName(userName);
 		return colaboradorService.panelColaboradoresPorUsuario(usuario.getId());
+	}
+
+	@PutMapping(path = "/addAccessToColaborator")
+	public ColaboradorAdminReponse agregarAccesos(@Valid @RequestBody ColaboradorAccesoRequest request) {
+		return colaboradorService.agregarAccesos(request);
 	}
 
 }

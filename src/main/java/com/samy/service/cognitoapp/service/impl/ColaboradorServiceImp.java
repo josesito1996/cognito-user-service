@@ -2,6 +2,7 @@ package com.samy.service.cognitoapp.service.impl;
 
 import static com.samy.service.cognitoapp.utils.Utils.formatoFecha;
 import static com.samy.service.cognitoapp.utils.Utils.formatoHora;
+import static com.samy.service.cognitoapp.utils.Utils.transformToModulo;
 
 import java.util.List;
 import java.util.Optional;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import com.samy.service.cognitoapp.exception.BadRequestException;
 import com.samy.service.cognitoapp.model.ColaboradorTable;
+import com.samy.service.cognitoapp.model.request.ColaboradorAccesoRequest;
 import com.samy.service.cognitoapp.model.response.ColaboradorAdminReponse;
 import com.samy.service.cognitoapp.model.response.ColaboradorResponse;
 import com.samy.service.cognitoapp.model.response.UserResponseBody;
@@ -102,15 +104,34 @@ public class ColaboradorServiceImp extends CrudImpl<ColaboradorTable, String> im
 	public List<ColaboradorAdminReponse> panelColaboradoresPorUsuario(String idUsuario) {
 
 		List<ColaboradorTable> colaboradores = repo.findByIdUsuario(idUsuario);
-		return colaboradores.stream().map(colaborador -> {
-			return ColaboradorAdminReponse.builder().id(colaborador.getIdColaborador())
-					.datos(colaborador.getNombres().concat(" ").concat(colaborador.getApellidos()))
-					.userName(colaborador.getCorreo()).fechaRegistro(formatoFecha(colaborador.getFechaRegistro()))
-					.horaRegistro(formatoHora(colaborador.getFechaRegistro())).rol(colaborador.getRol())
-					.estado(colaborador.isEstado()).accesos(colaborador.getAccesos().stream()
-							.map(item -> Utils.transformToModulo(item)).collect(Collectors.toList()))
-					.build();
-		}).collect(Collectors.toList());
+		return colaboradores.stream()
+				.map(colaborador -> transform(colaborador))
+				.collect(Collectors.toList());
+	}
+
+	@Override
+	public ColaboradorAdminReponse agregarAccesos(ColaboradorAccesoRequest request) {
+		ColaboradorTable colaborador = buscarPorId(request.getId());
+		colaborador.setAccesos(request.getAccesos()
+				.stream()
+				.map(item -> transformToModulo(item))
+				.collect(Collectors.toList()));
+		return transform(modificar(colaborador));
+	}
+	
+	
+	private ColaboradorAdminReponse transform(ColaboradorTable colaborador) {
+		return ColaboradorAdminReponse
+				.builder()
+				.id(colaborador.getIdColaborador())
+				.datos(colaborador.getNombres().concat(" ").concat(colaborador.getApellidos()))
+				.userName(colaborador.getCorreo())
+				.fechaRegistro(formatoFecha(colaborador.getFechaRegistro()))
+				.horaRegistro(formatoHora(colaborador.getFechaRegistro()))
+				.rol(colaborador.getRol())
+				.estado(colaborador.isEstado()).accesos(colaborador.getAccesos().stream()
+						.map(item -> Utils.transformToModulo(item)).collect(Collectors.toList()))
+				.build();
 	}
 
 }

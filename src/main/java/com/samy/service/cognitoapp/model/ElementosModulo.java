@@ -1,7 +1,6 @@
 package com.samy.service.cognitoapp.model;
 
 import java.io.Serializable;
-import java.util.List;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBDocument;
@@ -20,17 +19,16 @@ import lombok.ToString;
 @NoArgsConstructor
 @DynamoDBDocument
 @ToString
-public class Modulo implements Serializable{
+public class ElementosModulo implements Serializable {
 
-	private static final long serialVersionUID = -7946781432415559399L;
-
-	@DynamoDBAttribute
-	private String name;
+	private static final long serialVersionUID = 4508346316359231760L;
 
 	@DynamoDBAttribute
-	private String path;
+	private String key;
+
+	@DynamoDBAttribute
+	private String item;
 	
 	@DynamoDBAttribute
-	private List<ElementosModulo> items;
-
+	private boolean estado;
 }

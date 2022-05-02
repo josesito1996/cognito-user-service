@@ -4,6 +4,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.io.Serializable;
+import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,5 +24,7 @@ public class ModuloResponse implements Serializable{
 	private String name;
 	
 	private String path;
+	
+	private List<ElementosModuloResponse> items;
 	
 }

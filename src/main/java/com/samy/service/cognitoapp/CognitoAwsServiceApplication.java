@@ -33,6 +33,9 @@ public class CognitoAwsServiceApplication implements CommandLineRunner {
 		usuarioService.listar().forEach(item -> {
 			//item.setRol("ADMIN");
 			item.setAccesos(new ArrayList<>());
+			item.getAccesos().forEach(acceso -> {
+				acceso.setItems(new ArrayList<>());
+			});
 			usuarioService.modificar(item);
 		});
 	}
@@ -40,6 +43,9 @@ public class CognitoAwsServiceApplication implements CommandLineRunner {
 		colaboradorService.listar().forEach(item -> {
 			//item.setRol("COLABORADOR");
 			item.setAccesos(new ArrayList<>());
+			item.getAccesos().forEach(acceso -> {
+				acceso.setItems(new ArrayList<>());
+			});
 			colaboradorService.modificar(item);
 		});
 	}

@@ -1,9 +1,7 @@
-package com.samy.service.cognitoapp.model.request;
+package com.samy.service.cognitoapp.model.response;
 
 import java.io.Serializable;
-import java.util.List;
 
-import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
@@ -20,20 +18,17 @@ import lombok.ToString;
 @Setter
 @ToString
 @NoArgsConstructor
-public class AccesoRequest implements Serializable {
-	
-	private static final long serialVersionUID = -3684495549169287741L;
+public class ElementosModuloResponse implements Serializable {
+
+	private static final long serialVersionUID = -344321423223865941L;
 
 	@NotNull
 	@NotEmpty
-	private String name;
-
+	private String key;
+	
 	@NotNull
 	@NotEmpty
-	private String path;
+	private String item;
 	
-	@Valid
-	@NotEmpty
-	private List<ElementosModuloRequest> items;
-	
+	private boolean estado;
 }

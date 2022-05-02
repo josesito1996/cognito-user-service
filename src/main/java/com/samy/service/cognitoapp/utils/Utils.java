@@ -8,11 +8,14 @@ import java.time.format.FormatStyle;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.samy.service.cognitoapp.model.ColaboradorTable;
+import com.samy.service.cognitoapp.model.ElementosModulo;
 import com.samy.service.cognitoapp.model.Modulo;
 import com.samy.service.cognitoapp.model.Usuario;
 import com.samy.service.cognitoapp.model.request.AccesoRequest;
+import com.samy.service.cognitoapp.model.response.ElementosModuloResponse;
 import com.samy.service.cognitoapp.model.response.ModuloResponse;
 
 public class Utils {
@@ -103,6 +106,9 @@ public class Utils {
 		return ModuloResponse.builder()
 				.name(modulo.getName())
 				.path(modulo.getPath())
+				.items(modulo.getItems().stream().map(item -> {
+					return new ElementosModuloResponse(item.getKey(), item.getItem(), item.isEstado());
+				}).collect(Collectors.toList()))
 				.build();
 	}
 	
@@ -110,6 +116,9 @@ public class Utils {
 		return Modulo.builder()
 				.name(request.getName())
 				.path(request.getPath())
+				.items(request.getItems().stream().map(item -> {
+					return new ElementosModulo(item.getKey(), item.getItem(), item.isEstado());
+				}).collect(Collectors.toList()))
 				.build();
 	}
 

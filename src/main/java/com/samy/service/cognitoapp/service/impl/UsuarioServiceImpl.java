@@ -2,11 +2,11 @@ package com.samy.service.cognitoapp.service.impl;
 
 import static com.samy.service.cognitoapp.utils.JwtUtil.decodedJwt;
 import static com.samy.service.cognitoapp.utils.JwtUtil.getJwtFromObjectAuthentication;
-import static com.samy.service.cognitoapp.utils.Utils.buildBodyForToken;
 import static com.samy.service.cognitoapp.utils.Utils.buildBodyColaboratorForToken;
+import static com.samy.service.cognitoapp.utils.Utils.buildBodyForToken;
 import static com.samy.service.cognitoapp.utils.Utils.cleanId;
-import static com.samy.service.cognitoapp.utils.Utils.messageWelcomeHtmlBuilder;
 import static com.samy.service.cognitoapp.utils.Utils.messageWelcomeColaboratorHtmlBuilder;
+import static com.samy.service.cognitoapp.utils.Utils.messageWelcomeHtmlBuilder;
 import static com.samy.service.cognitoapp.utils.Utils.numberToLocalDateTime;
 
 import java.time.LocalDateTime;
@@ -95,12 +95,17 @@ public class UsuarioServiceImpl extends CrudImpl<Usuario, String> implements Usu
 		Password password = new Password();
 		password.setLongitud(10);
 		password.setContrasena(request.getMail());
+		ColaboradorTable colaboradorSave = ColaboradorTable.builder().nombres(request.getNames()).apellidos(request.getLastName())
+				.correo(request.getMail()).password(password.generarPassword()).empresa(usuario.getEmpresa())
+				.idUsuario(usuario.getIdUsuario()).fechaRegistro(LocalDateTime.now()).passwordChanged(false)
+				.accesos(new ArrayList<>())
+				.estado(true).validado(false).eliminado(false).build();
+		colaboradorSave.setAccesos(new ArrayList<>());
+		colaboradorSave.getAccesos().forEach(item -> {
+			item.setItems(new ArrayList<>());
+		});
 		ColaboradorTable colaborador = colaboradorService
-				.registrar(ColaboradorTable.builder().nombres(request.getNames()).apellidos(request.getLastName())
-						.correo(request.getMail()).password(password.generarPassword()).empresa(usuario.getEmpresa())
-						.idUsuario(usuario.getIdUsuario()).fechaRegistro(LocalDateTime.now()).passwordChanged(false)
-						.accesos(new ArrayList<>())
-						.estado(true).validado(false).eliminado(false).build());
+				.registrar(colaboradorSave);
 
 		JsonObject obj = new JsonObject();
 		obj.addProperty("emailFrom", "notificacion.sami@sidetechsolutions.com");
@@ -201,6 +206,9 @@ public class UsuarioServiceImpl extends CrudImpl<Usuario, String> implements Usu
 		usuario.setValidado(false);
 		usuario.setFechaCreacion(LocalDateTime.now());
 		usuario.setAccesos(new ArrayList<>());
+		usuario.getAccesos().forEach(item -> {
+			item.setItems(new ArrayList<>());
+		});
 		Usuario newUsuario = registrar(usuario);
 		JsonObject obj = new JsonObject();
 		obj.addProperty("emailFrom", "notificacion.sami@sidetechsolutions.com");

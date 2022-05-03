@@ -33,7 +33,6 @@ public class AccesoRequest implements Serializable {
 	private String path;
 	
 	@Valid
-	@NotEmpty
 	private List<ElementosModuloRequest> items;
 	
 }

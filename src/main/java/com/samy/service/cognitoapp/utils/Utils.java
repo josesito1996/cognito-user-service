@@ -151,7 +151,7 @@ public class Utils {
 	 * 
 	 * public static void main(String... args) {
 	 * System.out.println(extraerDominio("castillojose12031996@gmail.com"));
-	 * 
+	 * .
 	 * }
 	 **/
 	

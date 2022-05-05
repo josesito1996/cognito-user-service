@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.samy.service.cognitoapp.model.Usuario;
 import com.samy.service.cognitoapp.model.request.ChangePasswordRequest;
 import com.samy.service.cognitoapp.model.request.ColaboradorAccesoRequest;
+import com.samy.service.cognitoapp.model.request.ColaboradorDisableEnablaRequest;
 import com.samy.service.cognitoapp.model.request.ColaboratorRequest;
 import com.samy.service.cognitoapp.model.request.UserRequestBody;
 import com.samy.service.cognitoapp.model.response.ColaboradorAdminReponse;
@@ -114,4 +115,9 @@ public class UsuarioController {
 		return colaboradorService.agregarAccesos(request);
 	}
 
+	@PutMapping(path = "/updateStatusColaborator")
+	public ColaboradorAdminReponse updateStatusColaborator(@Valid @RequestBody ColaboradorDisableEnablaRequest request) {
+		return colaboradorService.cambiarEstado(request);
+	}
+	
 }

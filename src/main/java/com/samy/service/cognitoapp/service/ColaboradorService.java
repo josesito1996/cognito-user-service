@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.samy.service.cognitoapp.model.ColaboradorTable;
 import com.samy.service.cognitoapp.model.request.ColaboradorAccesoRequest;
+import com.samy.service.cognitoapp.model.request.ColaboradorDisableEnablaRequest;
 import com.samy.service.cognitoapp.model.response.ColaboradorAdminReponse;
 import com.samy.service.cognitoapp.model.response.ColaboradorResponse;
 import com.samy.service.cognitoapp.model.response.UserResponseBody;
@@ -30,5 +31,7 @@ public interface ColaboradorService extends ICrud<ColaboradorTable, String> {
 	public List<ColaboradorAdminReponse> panelColaboradoresPorUsuario(String idUsuario);
 	
 	public ColaboradorAdminReponse agregarAccesos(ColaboradorAccesoRequest request);
+	
+	public ColaboradorAdminReponse cambiarEstado(ColaboradorDisableEnablaRequest request);
 
 }

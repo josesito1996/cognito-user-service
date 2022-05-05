@@ -9,6 +9,10 @@ import com.amazonaws.services.cognitoidp.model.AdminCreateUserRequest;
 import com.amazonaws.services.cognitoidp.model.AdminCreateUserResult;
 import com.amazonaws.services.cognitoidp.model.AdminDeleteUserRequest;
 import com.amazonaws.services.cognitoidp.model.AdminDeleteUserResult;
+import com.amazonaws.services.cognitoidp.model.AdminDisableUserRequest;
+import com.amazonaws.services.cognitoidp.model.AdminDisableUserResult;
+import com.amazonaws.services.cognitoidp.model.AdminEnableUserRequest;
+import com.amazonaws.services.cognitoidp.model.AdminEnableUserResult;
 import com.amazonaws.services.cognitoidp.model.AdminSetUserPasswordRequest;
 import com.amazonaws.services.cognitoidp.model.AdminSetUserPasswordResult;
 import com.amazonaws.services.cognitoidp.model.AttributeType;
@@ -27,6 +31,26 @@ public class CognitoRequestBuilder {
 	@Value(value = "${aws.cognito.userPoolId}")
 	private String userPoolId;
 
+	public AdminDisableUserResult disableUser(String userName, AWSCognitoIdentityProvider cognitoClient) {
+		try {
+			AdminDisableUserRequest disableUser = new AdminDisableUserRequest().withUserPoolId(userPoolId)
+					.withUsername(userName);
+			return cognitoClient.adminDisableUser(disableUser);
+		} catch (Exception e) {
+			throw new AWSCognitoIdentityProviderException(e.getMessage());
+		}
+	}
+	
+	public AdminEnableUserResult enableUser(String userName, AWSCognitoIdentityProvider cognitoClient) {
+		try {
+			AdminEnableUserRequest enableUser = new AdminEnableUserRequest().withUserPoolId(userPoolId)
+					.withUsername(userName);
+			return cognitoClient.adminEnableUser(enableUser);
+		} catch (Exception e) {
+			throw new AWSCognitoIdentityProviderException(e.getMessage());
+		}
+	}
+	
 	public AdminDeleteUserResult deleteUser(String userName, AWSCognitoIdentityProvider cognitoClient) {
 		try {
 			AdminDeleteUserRequest newDeleteRequest = new AdminDeleteUserRequest().withUserPoolId(userPoolId)

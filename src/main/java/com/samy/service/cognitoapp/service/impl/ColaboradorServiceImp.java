@@ -4,6 +4,7 @@ import static com.samy.service.cognitoapp.utils.Utils.formatoFecha;
 import static com.samy.service.cognitoapp.utils.Utils.formatoHora;
 import static com.samy.service.cognitoapp.utils.Utils.transformToModulo;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -114,7 +115,9 @@ public class ColaboradorServiceImp extends CrudImpl<ColaboradorTable, String> im
 	public List<ColaboradorAdminReponse> panelColaboradoresPorUsuario(String idUsuario) {
 
 		List<ColaboradorTable> colaboradores = repo.findByIdUsuario(idUsuario);
-		return colaboradores.stream().map(colaborador -> transform(colaborador)).collect(Collectors.toList());
+		return colaboradores.stream()
+				.sorted(Comparator.comparing(ColaboradorTable::isEstado).reversed())
+				.map(colaborador -> transform(colaborador)).collect(Collectors.toList());
 	}
 
 	@Override

@@ -209,6 +209,7 @@ public class UsuarioServiceImpl extends CrudImpl<Usuario, String> implements Usu
 		usuario.getAccesos().forEach(item -> {
 			item.setItems(new ArrayList<>());
 		});
+		usuario.setRol("ADMIN");
 		Usuario newUsuario = registrar(usuario);
 		JsonObject obj = new JsonObject();
 		obj.addProperty("emailFrom", "notificacion.sami@sidetechsolutions.com");

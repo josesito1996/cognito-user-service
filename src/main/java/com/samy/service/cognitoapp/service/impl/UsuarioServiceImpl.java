@@ -255,7 +255,7 @@ public class UsuarioServiceImpl extends CrudImpl<Usuario, String> implements Usu
 						.registrarUsuarioV2(UserRequestBody.builder().nombres(usuario.getNombres())
 								.apellidos(usuario.getApellidos()).nombreUsuario(usuario.getNombreUsuario())
 								.correo(usuario.getCorreo()).contraseña(usuario.getContrasena()).terminos(true)
-								.tipo("USUARIO").empresa(usuario.getEmpresa()).colaboradores(null).build());
+								.tipo("USUARIO").empresa(usuario.getEmpresa()).colaboradores(new ArrayList<>()).build());
 				resultado = response.getId() != null;
 			}
 		} else {

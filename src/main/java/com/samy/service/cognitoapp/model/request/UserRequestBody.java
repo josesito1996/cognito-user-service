@@ -60,8 +60,6 @@ public class UserRequestBody {
 	@NotEmpty
 	private String empresa;
 	
-	@NotNull
-	@NotEmpty
 	private String tipo;
 
 	@Valid

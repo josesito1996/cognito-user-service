@@ -88,6 +88,7 @@ public class ColaboradorServiceImp extends CrudImpl<ColaboradorTable, String> im
 			nuevoApellido = apellidos.substring(0, apellidos.indexOf(" "));
 		}
 		return UserResponseBody.builder().id(colaborador.getIdColaborador())
+				.empresa(colaborador.getEmpresa())
 				.datosUsuario(nuevoNombre.concat(" ").concat(nuevoApellido)).nombreUsuario(colaborador.getCorreo())
 				.accesos(colaborador.getAccesos().stream().map(item -> Utils.transformToModulo(item))
 						.collect(Collectors.toList()))

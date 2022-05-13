@@ -178,6 +178,7 @@ public class UsuarioServiceImpl extends CrudImpl<Usuario, String> implements Usu
 		}
 		return UserResponseBody.builder().id(usuario.getIdUsuario())
 				.datosUsuario(nuevoNombre.concat(" ").concat(nuevoApellido)).nombreUsuario(usuario.getNombreUsuario())
+				.empresa(usuario.getEmpresa())
 				.claveCambiada(true).rol(usuario.getRol()).accesos(usuario.getAccesos().stream()
 						.map(item -> Utils.transformToModulo(item)).collect(Collectors.toList()))
 				.tipo("USUARIO").build();

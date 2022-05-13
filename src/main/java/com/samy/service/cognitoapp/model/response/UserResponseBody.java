@@ -23,6 +23,8 @@ public class UserResponseBody {
 	
 	private String rol;
 	
+	private String empresa;
+	
 	private boolean claveCambiada;
 	
 	List<ModuloResponse> accesos;

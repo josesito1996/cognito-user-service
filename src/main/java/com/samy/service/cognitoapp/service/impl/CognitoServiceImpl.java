@@ -64,9 +64,9 @@ public class CognitoServiceImpl implements CognitoService {
 
 			usuario.setEstado(false);
 			return new UserResponseBody(usuarioService.modificar(usuario).getIdUsuario(), "", "", "", usuario.getRol(),
-					true, new ArrayList<>());
+					"", true, new ArrayList<>());
 		}
-		return new UserResponseBody("Error al Eliminar", "", "", "", usuario.getRol(), true, new ArrayList<>());
+		return new UserResponseBody("Error al Eliminar", "", "", "", usuario.getRol(), "", true, new ArrayList<>());
 	}
 
 	@Override

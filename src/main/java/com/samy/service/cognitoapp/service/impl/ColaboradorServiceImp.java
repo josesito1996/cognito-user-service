@@ -87,8 +87,7 @@ public class ColaboradorServiceImp extends CrudImpl<ColaboradorTable, String> im
 		if (apellidos.contains(" ")) {
 			nuevoApellido = apellidos.substring(0, apellidos.indexOf(" "));
 		}
-		return UserResponseBody.builder().id(colaborador.getIdColaborador())
-				.empresa(colaborador.getEmpresa())
+		return UserResponseBody.builder().id(colaborador.getIdColaborador()).empresa(colaborador.getEmpresa())
 				.datosUsuario(nuevoNombre.concat(" ").concat(nuevoApellido)).nombreUsuario(colaborador.getCorreo())
 				.accesos(colaborador.getAccesos().stream().map(item -> Utils.transformToModulo(item))
 						.collect(Collectors.toList()))
@@ -114,10 +113,11 @@ public class ColaboradorServiceImp extends CrudImpl<ColaboradorTable, String> im
 
 	@Override
 	public List<ColaboradorAdminReponse> panelColaboradoresPorUsuario(String idUsuario) {
-
+		if (idUsuario == null) {
+			throw new BadRequestException("No existe ususario con ID " + idUsuario);
+		}
 		List<ColaboradorTable> colaboradores = repo.findByIdUsuario(idUsuario);
-		return colaboradores.stream()
-				.sorted(Comparator.comparing(ColaboradorTable::isEstado).reversed())
+		return colaboradores.stream().sorted(Comparator.comparing(ColaboradorTable::isEstado).reversed())
 				.map(colaborador -> transform(colaborador)).collect(Collectors.toList());
 	}
 
@@ -144,13 +144,13 @@ public class ColaboradorServiceImp extends CrudImpl<ColaboradorTable, String> im
 		ColaboradorTable colaborador = buscarPorId(request.getId());
 		colaborador.setEstado(request.isEstado());
 		if (request.isEstado()) {
-			//Habilitar
+			// Habilitar
 			AdminEnableUserResult result = builder.enableUser(colaborador.getCorreo(), cognitoClient);
 			if (result.getSdkResponseMetadata() == null) {
 				throw new BadRequestException("Error al deshabilitar el usuario " + colaborador.getCorreo());
 			}
 		} else {
-			//Desabilitar
+			// Desabilitar
 			AdminDisableUserResult result = builder.disableUser(colaborador.getCorreo(), cognitoClient);
 			if (result.getSdkResponseMetadata() == null) {
 				throw new BadRequestException("Error al deshabilitar el usuario " + colaborador.getCorreo());

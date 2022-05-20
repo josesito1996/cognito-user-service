@@ -5,8 +5,6 @@ import static com.samy.service.cognitoapp.utils.JwtUtil.getJwtFromObjectAuthenti
 import static com.samy.service.cognitoapp.utils.Utils.buildBodyColaboratorForToken;
 import static com.samy.service.cognitoapp.utils.Utils.buildBodyForToken;
 import static com.samy.service.cognitoapp.utils.Utils.cleanId;
-import static com.samy.service.cognitoapp.utils.Utils.messageWelcomeColaboratorHtmlBuilder;
-import static com.samy.service.cognitoapp.utils.Utils.messageWelcomeHtmlBuilder;
 import static com.samy.service.cognitoapp.utils.Utils.numberToLocalDateTime;
 
 import java.time.LocalDateTime;
@@ -112,11 +110,12 @@ public class UsuarioServiceImpl extends CrudImpl<Usuario, String> implements Usu
 				.registrar(colaboradorSave);
 
 		JsonObject obj = new JsonObject();
+		Utils utils = new Utils(properties.getUrlUser());
 		obj.addProperty("emailFrom", "notificacion.sami@sidetechsolutions.com");
 		obj.addProperty("subject", "Correo de bienvenida");
 		obj.addProperty("emailTo", colaborador.getCorreo());
-		obj.addProperty("content", messageWelcomeColaboratorHtmlBuilder(colaborador,
-				getJwtFromObjectAuthentication(buildBodyColaboratorForToken(colaborador)),properties.getUrlUser()));
+		obj.addProperty("content", utils.messageWelcomeColaboratorHtmlBuilder(colaborador,
+				getJwtFromObjectAuthentication(buildBodyColaboratorForToken(colaborador))));
 		JsonElement resultMainSend = lambdaService.mailSendWithLambda(obj.toString()).get("code");
 		String code = resultMainSend.getAsString();
 		log.info("mailSendWithLambda : " + code);
@@ -217,11 +216,12 @@ public class UsuarioServiceImpl extends CrudImpl<Usuario, String> implements Usu
 		usuario.setRol("ADMIN");
 		Usuario newUsuario = registrar(usuario);
 		JsonObject obj = new JsonObject();
+		Utils utils = new Utils(properties.getUrlUser());
 		obj.addProperty("emailFrom", "notificacion.sami@sidetechsolutions.com");
 		obj.addProperty("subject", "Correo de bienvenida");
 		obj.addProperty("emailTo", requestBody.getNombreUsuario());
 		obj.addProperty("content",
-				messageWelcomeHtmlBuilder(newUsuario, getJwtFromObjectAuthentication(buildBodyForToken(usuario)),properties.getUrlUser()));
+				utils.messageWelcomeHtmlBuilder(newUsuario, getJwtFromObjectAuthentication(buildBodyForToken(usuario))));
 		JsonElement resultMainSend = lambdaService.mailSendWithLambda(obj.toString()).get("code");
 		String code = resultMainSend.getAsString();
 		log.info("mailSendWithLambda : " + code);

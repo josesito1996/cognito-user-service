@@ -110,7 +110,8 @@ public class UsuarioServiceImpl extends CrudImpl<Usuario, String> implements Usu
 				.registrar(colaboradorSave);
 
 		JsonObject obj = new JsonObject();
-		Utils utils = new Utils(properties.getUrlUser());
+		Utils utils = new Utils();
+		utils.setUrl(properties.getUrlUser());
 		obj.addProperty("emailFrom", "notificacion.sami@sidetechsolutions.com");
 		obj.addProperty("subject", "Correo de bienvenida");
 		obj.addProperty("emailTo", colaborador.getCorreo());
@@ -216,7 +217,8 @@ public class UsuarioServiceImpl extends CrudImpl<Usuario, String> implements Usu
 		usuario.setRol("ADMIN");
 		Usuario newUsuario = registrar(usuario);
 		JsonObject obj = new JsonObject();
-		Utils utils = new Utils(properties.getUrlUser());
+		Utils utils = new Utils();
+		utils.setUrl(properties.getUrlUser());
 		obj.addProperty("emailFrom", "notificacion.sami@sidetechsolutions.com");
 		obj.addProperty("subject", "Correo de bienvenida");
 		obj.addProperty("emailTo", requestBody.getNombreUsuario());

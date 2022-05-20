@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.samy.service.cognitoapp.config.Properties;
 import com.samy.service.cognitoapp.exception.BadRequestException;
 import com.samy.service.cognitoapp.exception.NotFoundException;
 import com.samy.service.cognitoapp.model.ColaboradorTable;
@@ -44,6 +45,9 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class UsuarioServiceImpl extends CrudImpl<Usuario, String> implements UsuarioService {
 
+	@Autowired
+	private Properties properties;
+	
 	@Autowired
 	private UsuarioRepo repo;
 
@@ -112,7 +116,7 @@ public class UsuarioServiceImpl extends CrudImpl<Usuario, String> implements Usu
 		obj.addProperty("subject", "Correo de bienvenida");
 		obj.addProperty("emailTo", colaborador.getCorreo());
 		obj.addProperty("content", messageWelcomeColaboratorHtmlBuilder(colaborador,
-				getJwtFromObjectAuthentication(buildBodyColaboratorForToken(colaborador))));
+				getJwtFromObjectAuthentication(buildBodyColaboratorForToken(colaborador)),properties.getUrlUser()));
 		JsonElement resultMainSend = lambdaService.mailSendWithLambda(obj.toString()).get("code");
 		String code = resultMainSend.getAsString();
 		log.info("mailSendWithLambda : " + code);
@@ -217,7 +221,7 @@ public class UsuarioServiceImpl extends CrudImpl<Usuario, String> implements Usu
 		obj.addProperty("subject", "Correo de bienvenida");
 		obj.addProperty("emailTo", requestBody.getNombreUsuario());
 		obj.addProperty("content",
-				messageWelcomeHtmlBuilder(newUsuario, getJwtFromObjectAuthentication(buildBodyForToken(usuario))));
+				messageWelcomeHtmlBuilder(newUsuario, getJwtFromObjectAuthentication(buildBodyForToken(usuario)),properties.getUrlUser()));
 		JsonElement resultMainSend = lambdaService.mailSendWithLambda(obj.toString()).get("code");
 		String code = resultMainSend.getAsString();
 		log.info("mailSendWithLambda : " + code);

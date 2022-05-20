@@ -5,8 +5,6 @@ import static com.samy.service.cognitoapp.utils.JwtUtil.getJwtFromObjectAuthenti
 import static com.samy.service.cognitoapp.utils.Utils.buildBodyColaboratorForToken;
 import static com.samy.service.cognitoapp.utils.Utils.buildBodyForToken;
 import static com.samy.service.cognitoapp.utils.Utils.cleanId;
-import static com.samy.service.cognitoapp.utils.Utils.messageWelcomeColaboratorHtmlBuilder;
-import static com.samy.service.cognitoapp.utils.Utils.messageWelcomeHtmlBuilder;
 import static com.samy.service.cognitoapp.utils.Utils.numberToLocalDateTime;
 
 import java.time.LocalDateTime;
@@ -22,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.samy.service.cognitoapp.config.Properties;
 import com.samy.service.cognitoapp.exception.BadRequestException;
 import com.samy.service.cognitoapp.exception.NotFoundException;
 import com.samy.service.cognitoapp.model.ColaboradorTable;
@@ -44,6 +43,9 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class UsuarioServiceImpl extends CrudImpl<Usuario, String> implements UsuarioService {
 
+	@Autowired
+	private Properties properties;
+	
 	@Autowired
 	private UsuarioRepo repo;
 
@@ -108,10 +110,12 @@ public class UsuarioServiceImpl extends CrudImpl<Usuario, String> implements Usu
 				.registrar(colaboradorSave);
 
 		JsonObject obj = new JsonObject();
+		Utils utils = new Utils();
+		utils.setUrl(properties.getUrlUser());
 		obj.addProperty("emailFrom", "notificacion.sami@sidetechsolutions.com");
 		obj.addProperty("subject", "Correo de bienvenida");
 		obj.addProperty("emailTo", colaborador.getCorreo());
-		obj.addProperty("content", messageWelcomeColaboratorHtmlBuilder(colaborador,
+		obj.addProperty("content", utils.messageWelcomeColaboratorHtmlBuilder(colaborador,
 				getJwtFromObjectAuthentication(buildBodyColaboratorForToken(colaborador))));
 		JsonElement resultMainSend = lambdaService.mailSendWithLambda(obj.toString()).get("code");
 		String code = resultMainSend.getAsString();
@@ -213,11 +217,13 @@ public class UsuarioServiceImpl extends CrudImpl<Usuario, String> implements Usu
 		usuario.setRol("ADMIN");
 		Usuario newUsuario = registrar(usuario);
 		JsonObject obj = new JsonObject();
+		Utils utils = new Utils();
+		utils.setUrl(properties.getUrlUser());
 		obj.addProperty("emailFrom", "notificacion.sami@sidetechsolutions.com");
 		obj.addProperty("subject", "Correo de bienvenida");
 		obj.addProperty("emailTo", requestBody.getNombreUsuario());
 		obj.addProperty("content",
-				messageWelcomeHtmlBuilder(newUsuario, getJwtFromObjectAuthentication(buildBodyForToken(usuario))));
+				utils.messageWelcomeHtmlBuilder(newUsuario, getJwtFromObjectAuthentication(buildBodyForToken(usuario))));
 		JsonElement resultMainSend = lambdaService.mailSendWithLambda(obj.toString()).get("code");
 		String code = resultMainSend.getAsString();
 		log.info("mailSendWithLambda : " + code);

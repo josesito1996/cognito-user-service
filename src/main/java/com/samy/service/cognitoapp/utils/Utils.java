@@ -20,8 +20,14 @@ import com.samy.service.cognitoapp.model.response.ModuloResponse;
 
 public class Utils {
 
+	private String url;
+	
 	private static ZoneId defaultZoneId = ZoneId.systemDefault();
 
+	public void setUrl(String url) {
+		this.url=url;
+	}
+	
 	/**
 	 * Tiempo de duracion del token.
 	 */
@@ -78,8 +84,8 @@ public class Utils {
 	 * @param jwt
 	 * @return
 	 */
-	public static String messageWelcomeHtmlBuilder(Usuario usuario, String jwt) {
-		String urlActivator = "https://79z25zohcj.execute-api.us-east-2.amazonaws.com/dev/token-auth/authenticate?tokenKey="
+	public String messageWelcomeHtmlBuilder(Usuario usuario, String jwt) {
+		String urlActivator = this.url + "token-auth/authenticate?tokenKey="
 				+ jwt;
 		String htmlText = "<p><strong>Hola : " + usuario.getNombres() + ";</strong></p>\r\n"
 				+ "<h4>Bienvenido(a) a Samy.</h4>\r\n"
@@ -89,8 +95,8 @@ public class Utils {
 		return htmlText;
 	}
 
-	public static String messageWelcomeColaboratorHtmlBuilder(ColaboradorTable colaborador, String jwt) {
-		String urlActivator = "https://79z25zohcj.execute-api.us-east-2.amazonaws.com/dev/token-auth/authenticateColaborator?tokenKey="
+	public String messageWelcomeColaboratorHtmlBuilder(ColaboradorTable colaborador, String jwt) {
+		String urlActivator = this.url + "token-auth/authenticateColaborator?tokenKey="
 				+ jwt;
 		String htmlText = "<p><strong>Hola : " + colaborador.getNombres() + ";</strong></p>\r\n"
 				+ "<h4>Bienvenido(a) a Samy.</h4>\r\n"

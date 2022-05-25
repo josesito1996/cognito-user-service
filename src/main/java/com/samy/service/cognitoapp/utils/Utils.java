@@ -18,6 +18,9 @@ import com.samy.service.cognitoapp.model.request.AccesoRequest;
 import com.samy.service.cognitoapp.model.response.ElementosModuloResponse;
 import com.samy.service.cognitoapp.model.response.ModuloResponse;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class Utils {
 
 	private String url;
@@ -85,25 +88,27 @@ public class Utils {
 	 * @return
 	 */
 	public String messageWelcomeHtmlBuilder(Usuario usuario, String jwt) {
+		log.info("Utils.messageWelcomeHtmlBuilder : {}", jwt);
 		String urlActivator = this.url + "token-auth/authenticate?tokenKey="
 				+ jwt;
 		String htmlText = "<p><strong>Hola : " + usuario.getNombres() + ";</strong></p>\r\n"
-				+ "<h4>Bienvenido(a) a Samy.</h4>\r\n"
+				+ "<h4>Bienvenido(a) a Forma.</h4>\r\n"
 				+ "<p>Para poder activar tu cuenta de usuario ingresa al siguiente enlace:</p>\r\n"
-				+ "<p><a title=\"Samy authenticador\" href=" + urlActivator
+				+ "<p><a title=\"Forma authenticador\" href=" + urlActivator
 				+ " target=\"_blank\">Haz click aqui</a></p>";
 		return htmlText;
 	}
 
 	public String messageWelcomeColaboratorHtmlBuilder(ColaboradorTable colaborador, String jwt) {
+		log.info("Utils.messageWelcomeColaboratorHtmlBuilder : {}", jwt);
 		String urlActivator = this.url + "token-auth/authenticateColaborator?tokenKey="
 				+ jwt;
 		String htmlText = "<p><strong>Hola : " + colaborador.getNombres() + ";</strong></p>\r\n"
-				+ "<h4>Bienvenido(a) a Samy.</h4>\r\n"
+				+ "<h4>Bienvenido(a) a Forma.</h4>\r\n"
 				+ "<h4>Tu Usuario es : " + colaborador.getCorreo()
 				+"<h4>Tu password es : " + colaborador.getPassword()
 				+ "</h4>\r\n" + "<p>Para poder activar tu cuenta de usuario ingresa al siguiente enlace:</p>\r\n"
-				+ "<p><a title=\"Samy authenticador\" href=" + urlActivator
+				+ "<p><a title=\"Forma authenticador\" href=" + urlActivator
 				+ " target=\"_blank\">Haz click aqui</a></p>";
 		return htmlText;
 	}

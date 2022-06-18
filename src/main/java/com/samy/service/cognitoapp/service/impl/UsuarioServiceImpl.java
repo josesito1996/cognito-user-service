@@ -1,5 +1,7 @@
 package com.samy.service.cognitoapp.service.impl;
 
+import static com.samy.service.cognitoapp.utils.Constant.TOKEN_PATH_USER;
+import static com.samy.service.cognitoapp.utils.Constant.TOKEN_PATH_COLABORATOR;
 import static com.samy.service.cognitoapp.utils.JwtUtil.decodedJwt;
 import static com.samy.service.cognitoapp.utils.JwtUtil.getJwtFromObjectAuthentication;
 import static com.samy.service.cognitoapp.utils.Utils.buildBodyColaboratorForToken;
@@ -54,6 +56,9 @@ public class UsuarioServiceImpl extends CrudImpl<Usuario, String> implements Usu
 
 	@Value("${email.template-id}")
 	private String templateId;
+
+	@Value("${email.template-id-colaborador}")
+	private String templateColaboradorId;
 
 	@Autowired
 	private UsuarioRepo repo;
@@ -118,13 +123,20 @@ public class UsuarioServiceImpl extends CrudImpl<Usuario, String> implements Usu
 		ColaboradorTable colaborador = colaboradorService.registrar(colaboradorSave);
 
 		JsonObject obj = new JsonObject();
-		Utils utils = new Utils();
-		utils.setUrl(properties.getUrlUser());
+		JsonObject dynamicTemplate = new JsonObject();
+		dynamicTemplate.addProperty("user", usuario.getNombres());
+		dynamicTemplate.addProperty("url", properties.getUrlUser());
+		dynamicTemplate.addProperty("path", TOKEN_PATH_COLABORATOR);
+		dynamicTemplate.addProperty("token", getJwtFromObjectAuthentication(buildBodyColaboratorForToken(colaborador)));
+		dynamicTemplate.addProperty("empresa", usuario.getEmpresa());
+		dynamicTemplate.addProperty("colaboradorName", colaborador.getNombres());
+		dynamicTemplate.addProperty("colaborador", colaborador.getCorreo());
+		dynamicTemplate.addProperty("password", colaborador.getPassword());
 		obj.addProperty("emailFrom", fromUser);
-		obj.addProperty("subject", "Correo de bienvenida");
 		obj.addProperty("emailTo", colaborador.getCorreo());
-		obj.addProperty("content", utils.messageWelcomeColaboratorHtmlBuilder(colaborador,
-				getJwtFromObjectAuthentication(buildBodyColaboratorForToken(colaborador))));
+		obj.addProperty("templateId", templateColaboradorId);
+		obj.add("dynamicTemplate", dynamicTemplate);
+		log.info("JsonObject : {}", obj);
 		JsonElement resultMainSend = lambdaService.mailSendWithLambda(obj.toString()).get("code");
 		String code = resultMainSend.getAsString();
 		log.info("mailSendWithLambda : " + code);
@@ -227,7 +239,7 @@ public class UsuarioServiceImpl extends CrudImpl<Usuario, String> implements Usu
 		JsonObject objDynamic = new JsonObject();
 		objDynamic.addProperty("user", requestBody.getNombres());
 		objDynamic.addProperty("url", properties.getUrlUser());
-		objDynamic.addProperty("path", "token-auth/authenticate?tokenKey=");
+		objDynamic.addProperty("path", TOKEN_PATH_USER);
 		objDynamic.addProperty("token", getJwtFromObjectAuthentication(buildBodyForToken(usuario)));
 		objDynamic.addProperty("empresa", requestBody.getEmpresa());
 		obj.addProperty("emailFrom", fromUser);

@@ -15,6 +15,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,13 +41,20 @@ import com.samy.service.cognitoapp.utils.Utils;
 
 import lombok.extern.slf4j.Slf4j;
 
+@RefreshScope
 @Service
 @Slf4j
 public class UsuarioServiceImpl extends CrudImpl<Usuario, String> implements UsuarioService {
 
 	@Autowired
 	private Properties properties;
-	
+
+	@Value("${email.from}")
+	private String fromUser;
+
+	@Value("${email.template-id}")
+	private String templateId;
+
 	@Autowired
 	private UsuarioRepo repo;
 
@@ -97,22 +106,21 @@ public class UsuarioServiceImpl extends CrudImpl<Usuario, String> implements Usu
 		Password password = new Password();
 		password.setLongitud(10);
 		password.setContrasena(request.getMail());
-		ColaboradorTable colaboradorSave = ColaboradorTable.builder().nombres(request.getNames()).apellidos(request.getLastName())
-				.correo(request.getMail()).password(password.generarPassword()).empresa(usuario.getEmpresa())
-				.idUsuario(usuario.getIdUsuario()).fechaRegistro(LocalDateTime.now()).passwordChanged(false)
-				.accesos(new ArrayList<>())
-				.estado(true).validado(false).eliminado(false).build();
+		ColaboradorTable colaboradorSave = ColaboradorTable.builder().nombres(request.getNames())
+				.apellidos(request.getLastName()).correo(request.getMail()).password(password.generarPassword())
+				.empresa(usuario.getEmpresa()).idUsuario(usuario.getIdUsuario()).fechaRegistro(LocalDateTime.now())
+				.passwordChanged(false).accesos(new ArrayList<>()).estado(true).validado(false).eliminado(false)
+				.build();
 		colaboradorSave.setAccesos(new ArrayList<>());
 		colaboradorSave.getAccesos().forEach(item -> {
 			item.setItems(new ArrayList<>());
 		});
-		ColaboradorTable colaborador = colaboradorService
-				.registrar(colaboradorSave);
+		ColaboradorTable colaborador = colaboradorService.registrar(colaboradorSave);
 
 		JsonObject obj = new JsonObject();
 		Utils utils = new Utils();
 		utils.setUrl(properties.getUrlUser());
-		obj.addProperty("emailFrom", "notificacion.sami@sidetechsolutions.com");
+		obj.addProperty("emailFrom", fromUser);
 		obj.addProperty("subject", "Correo de bienvenida");
 		obj.addProperty("emailTo", colaborador.getCorreo());
 		obj.addProperty("content", utils.messageWelcomeColaboratorHtmlBuilder(colaborador,
@@ -182,9 +190,8 @@ public class UsuarioServiceImpl extends CrudImpl<Usuario, String> implements Usu
 		}
 		return UserResponseBody.builder().id(usuario.getIdUsuario())
 				.datosUsuario(nuevoNombre.concat(" ").concat(nuevoApellido)).nombreUsuario(usuario.getNombreUsuario())
-				.empresa(usuario.getEmpresa())
-				.claveCambiada(true).rol(usuario.getRol()).accesos(usuario.getAccesos().stream()
-						.map(item -> Utils.transformToModulo(item)).collect(Collectors.toList()))
+				.empresa(usuario.getEmpresa()).claveCambiada(true).rol(usuario.getRol()).accesos(usuario.getAccesos()
+						.stream().map(item -> Utils.transformToModulo(item)).collect(Collectors.toList()))
 				.tipo("USUARIO").build();
 	}
 
@@ -217,13 +224,17 @@ public class UsuarioServiceImpl extends CrudImpl<Usuario, String> implements Usu
 		usuario.setRol("ADMIN");
 		Usuario newUsuario = registrar(usuario);
 		JsonObject obj = new JsonObject();
-		Utils utils = new Utils();
-		utils.setUrl(properties.getUrlUser());
-		obj.addProperty("emailFrom", "notificacion.sami@sidetechsolutions.com");
-		obj.addProperty("subject", "Correo de bienvenida");
+		JsonObject objDynamic = new JsonObject();
+		objDynamic.addProperty("user", requestBody.getNombres());
+		objDynamic.addProperty("url", properties.getUrlUser());
+		objDynamic.addProperty("path", "token-auth/authenticate?tokenKey=");
+		objDynamic.addProperty("token", getJwtFromObjectAuthentication(buildBodyForToken(usuario)));
+		objDynamic.addProperty("empresa", requestBody.getEmpresa());
+		obj.addProperty("emailFrom", fromUser);
 		obj.addProperty("emailTo", requestBody.getNombreUsuario());
-		obj.addProperty("content",
-				utils.messageWelcomeHtmlBuilder(newUsuario, getJwtFromObjectAuthentication(buildBodyForToken(usuario))));
+		obj.addProperty("templateId", templateId);
+		obj.add("dynamicTemplate", objDynamic);
+		log.info("JsonObjct : {}", obj.toString());
 		JsonElement resultMainSend = lambdaService.mailSendWithLambda(obj.toString()).get("code");
 		String code = resultMainSend.getAsString();
 		log.info("mailSendWithLambda : " + code);
@@ -259,11 +270,11 @@ public class UsuarioServiceImpl extends CrudImpl<Usuario, String> implements Usu
 				usuario.setEliminado(false);
 				usuario.setValidado(true);
 				modificar(usuario);
-				UserResponseBody response = cognitoService
-						.registrarUsuarioV2(UserRequestBody.builder().nombres(usuario.getNombres())
-								.apellidos(usuario.getApellidos()).nombreUsuario(usuario.getNombreUsuario())
-								.correo(usuario.getCorreo()).contraseña(usuario.getContrasena()).terminos(true)
-								.tipo("USUARIO").empresa(usuario.getEmpresa()).colaboradores(new ArrayList<>()).build());
+				UserResponseBody response = cognitoService.registrarUsuarioV2(
+						UserRequestBody.builder().nombres(usuario.getNombres()).apellidos(usuario.getApellidos())
+								.nombreUsuario(usuario.getNombreUsuario()).correo(usuario.getCorreo())
+								.contraseña(usuario.getContrasena()).terminos(true).tipo("USUARIO")
+								.empresa(usuario.getEmpresa()).colaboradores(new ArrayList<>()).build());
 				resultado = response.getId() != null;
 			}
 		} else {

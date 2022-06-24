@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import com.amazonaws.services.cognitoidp.model.NotAuthorizedException;
+
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -21,25 +23,27 @@ public class ControllerAdvice {
 	public ErrorResponse notFoundException(NotFoundException ex) {
 		return new ErrorResponse(HttpStatus.NOT_FOUND.value(), LocalDateTime.now(), ex.getMessage(), new ArrayList<>());
 	}
-	
+
 	@ExceptionHandler(FoundException.class)
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	public ErrorResponse foundException(FoundException ex) {
-		return new ErrorResponse(HttpStatus.BAD_REQUEST.value(), LocalDateTime.now(), ex.getMessage(), new ArrayList<>());
+		return new ErrorResponse(HttpStatus.BAD_REQUEST.value(), LocalDateTime.now(), ex.getMessage(),
+				new ArrayList<>());
 	}
-	
-	@ExceptionHandler(BadRequestException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse BadRequestException(BadRequestException ex) {
-        return new ErrorResponse(HttpStatus.BAD_REQUEST.value(), LocalDateTime.now(), ex.getMessage(), new ArrayList<>());
-    }
-	
-	@ExceptionHandler(Exception.class)
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ErrorResponse internalException(Exception ex) {
-        return new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), LocalDateTime.now(), ex.getMessage(), new ArrayList<>());
-    }
 
+	@ExceptionHandler(BadRequestException.class)
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	public ErrorResponse BadRequestException(BadRequestException ex) {
+		return new ErrorResponse(HttpStatus.BAD_REQUEST.value(), LocalDateTime.now(), ex.getMessage(),
+				new ArrayList<>());
+	}
+
+	@ExceptionHandler(Exception.class)
+	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+	public ErrorResponse internalException(Exception ex) {
+		return new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), LocalDateTime.now(), ex.getMessage(),
+				new ArrayList<>());
+	}
 
 	@ExceptionHandler(MethodArgumentNotValidException.class)
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -50,6 +54,14 @@ public class ControllerAdvice {
 			details.add(new ErrorDetail(item.getField(), item.getDefaultMessage()));
 		});
 		return new ErrorResponse(HttpStatus.BAD_REQUEST.value(), LocalDateTime.now(), "Validacion de campos", details);
+	}
+
+	@ExceptionHandler(NotAuthorizedException.class)
+	@ResponseStatus(HttpStatus.UNAUTHORIZED)
+	public ErrorResponse notAuthorizedException(NotAuthorizedException ex) {
+		log.info("Dentro de la validacion : " + ex);
+		return new ErrorResponse(HttpStatus.UNAUTHORIZED.value(), LocalDateTime.now(), "Usuario o clave incorrectos",
+				new ArrayList<>());
 	}
 
 }

@@ -119,5 +119,4 @@ public class UsuarioController {
 	public ColaboradorAdminReponse updateStatusColaborator(@Valid @RequestBody ColaboradorDisableEnablaRequest request) {
 		return colaboradorService.cambiarEstado(request);
 	}
-	
 }

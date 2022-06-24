@@ -61,4 +61,8 @@ public class CognitoAwsServiceApplication implements CommandLineRunner {
 			colaboradorService.modificar(item);
 		});
 	}
+	
+	public void testCompletable() {
+		
+	}
 }

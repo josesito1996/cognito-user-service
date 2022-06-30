@@ -1,6 +1,6 @@
 package com.samy.service.cognitoapp.service.impl;
 
-import java.util.List;
+import java.util.Comparator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.samy.service.cognitoapp.model.Seguimiento;
@@ -21,8 +21,10 @@ public class SeguimientoServiceImpl extends CrudImpl<Seguimiento, String>
   }
 
   @Override
-  public List<Seguimiento> listarPorEmpresa(String empresa) {
-    return repo.findByEmpresa(empresa);
+  public Seguimiento listarPorEmpresaYUsuario(String empresa, String usuario) {
+    return repo.findByEmpresaAndUsuario(empresa, usuario).stream()
+        .sorted(Comparator.comparing(Seguimiento::getFechaIngreso).reversed())
+        .findFirst().orElse(Seguimiento.builder().build());
   }
 
 

@@ -7,6 +7,6 @@ import com.samy.service.cognitoapp.model.Seguimiento;
 @EnableScan
 public interface SeguimientoRepo extends GenericRepo<Seguimiento, String> {
     
-  List<Seguimiento> findByEmpresa(String empresa);
+  List<Seguimiento> findByEmpresaAndUsuario(String empresa, String usuario);
   
 }

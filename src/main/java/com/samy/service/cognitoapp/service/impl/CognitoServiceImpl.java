@@ -1,6 +1,8 @@
 package com.samy.service.cognitoapp.service.impl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -8,13 +10,20 @@ import org.springframework.stereotype.Service;
 import com.amazonaws.services.cognitoidp.AWSCognitoIdentityProvider;
 import com.amazonaws.services.cognitoidp.model.AdminDeleteUserResult;
 import com.amazonaws.services.cognitoidp.model.AdminSetUserPasswordResult;
+import com.amazonaws.services.cognitoidp.model.AuthFlowType;
+import com.amazonaws.services.cognitoidp.model.AuthenticationResultType;
 import com.amazonaws.services.cognitoidp.model.ChangePasswordResult;
+import com.amazonaws.services.cognitoidp.model.InitiateAuthRequest;
+import com.amazonaws.services.cognitoidp.model.InitiateAuthResult;
+import com.samy.service.cognitoapp.config.CognitoProperties;
 import com.samy.service.cognitoapp.exception.BadRequestException;
 import com.samy.service.cognitoapp.exception.FoundException;
 import com.samy.service.cognitoapp.model.ColaboradorTable;
 import com.samy.service.cognitoapp.model.Usuario;
 import com.samy.service.cognitoapp.model.request.ChangePasswordRequest;
+import com.samy.service.cognitoapp.model.request.LoginRequest;
 import com.samy.service.cognitoapp.model.request.UserRequestBody;
+import com.samy.service.cognitoapp.model.response.TokenAuthResponse;
 import com.samy.service.cognitoapp.model.response.UserResponseBody;
 import com.samy.service.cognitoapp.service.CognitoService;
 import com.samy.service.cognitoapp.service.ColaboradorService;
@@ -25,6 +34,9 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service
 public class CognitoServiceImpl implements CognitoService {
+
+	@Autowired
+	private CognitoProperties cognitoProperties;
 
 	@Autowired
 	private CognitoRequestBuilder builder;
@@ -107,5 +119,41 @@ public class CognitoServiceImpl implements CognitoService {
 		return UserResponseBody.builder().id(colaboradorUpdated.getIdUsuario())
 				.datosUsuario(colaboradorUpdated.getNombres().concat(" ").concat(colaboradorUpdated.getApellidos()))
 				.nombreUsuario(colaboradorUpdated.getCorreo()).build();
+	}
+
+	@Override
+	public TokenAuthResponse login(LoginRequest request) {
+		Map<String, String> authParams = new HashMap<String, String>() {
+			private static final long serialVersionUID = 1L;
+			{
+				put("USERNAME", request.getUserName());
+				put("PASSWORD", request.getPassword());
+			}
+		};
+		log.info("Properties : {}",cognitoProperties.toString());
+		InitiateAuthRequest  authRequest = new InitiateAuthRequest()
+				.withAuthFlow(AuthFlowType.USER_PASSWORD_AUTH)
+				.withClientId(cognitoProperties.getClientId())
+				.withAuthParameters(authParams);
+		InitiateAuthResult  authResult = cognitoClient.initiateAuth(authRequest);
+		AuthenticationResultType authResultType = authResult.getAuthenticationResult();
+		return TokenAuthResponse.builder()
+				.token(authResultType.getIdToken())
+				.data(getUserResponse(request.getUserName()))
+				.build();
+	}
+	
+	public UserResponseBody getUserResponse(String userName) {
+		UserResponseBody responseUsuario = usuarioService.getUsuarioByUserName(userName);
+		log.info("responseUsuario {}", responseUsuario);
+		if (responseUsuario.getId() != null) {
+			return responseUsuario;
+		}
+		UserResponseBody responseColaborador = colaboradorService.getUsuarioByUserName(userName);
+		log.info("responseUsuario {}", responseUsuario);
+		if (responseColaborador.getId() != null) {
+			return responseColaborador;
+		}
+		return new UserResponseBody();
 	}
 }

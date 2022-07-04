@@ -1,5 +1,6 @@
 package com.samy.service.cognitoapp.service.impl;
 
+import static com.samy.service.cognitoapp.utils.Constant.lambdaMailSenderNombre;
 import java.nio.charset.StandardCharsets;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,48 +20,49 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class LambdaServiceImpl implements LambdaService {
 
-    @Autowired
-    private AWSLambda lambdaService;
+	@Autowired
+	private AWSLambda lambdaService;
 
-    private String lambdaValidatorName = "email-validator-lambda";
+	private String lambdaValidatorName = "email-validator-lambda";
 
-    private String lambdaValidatorNameAndRegister = "lambda-mail-service";
+	private String lambdaValidatorNameAndRegister = "lambda-mail-service";
 
-    private String lambdaMailSenderName = "lambda-mailSender-service";
+	@Override
+	public JsonObject validEmailWithLambda(String payLoad) {
+		log.info("LambdaServiceImpl.validEmailWithLambda");
+		InvokeRequest invokeRequest = new InvokeRequest()
+				.withFunctionName(lambdaValidatorName)
+				.withPayload(payLoad);
+		InvokeResult result = lambdaService.invoke(invokeRequest);
+		String ans = new String(result.getPayload().array(), StandardCharsets.UTF_8);
+		JsonElement element = JsonParser.parseString(ans);
+		return element.getAsJsonObject();
+	}
 
-    @Override
-    public JsonObject validEmailWithLambda(String payLoad) {
-        log.info("LambdaServiceImpl.validEmailWithLambda");
-        InvokeRequest invokeRequest = new InvokeRequest().withFunctionName(lambdaValidatorName)
-                .withPayload(payLoad);
-        InvokeResult result = lambdaService.invoke(invokeRequest);
-        String ans = new String(result.getPayload().array(), StandardCharsets.UTF_8);
-        JsonElement element = JsonParser.parseString(ans);
-        return element.getAsJsonObject();
-    }
+	@Override
+	public JsonObject mailSendWithLambda(String payLoad) {
+		log.info("LambdaServiceImpl.mailSendWithLambda");
+		InvokeRequest invokeRequest = new InvokeRequest()
+				.withFunctionName(lambdaMailSenderNombre)
+				.withPayload(payLoad);
+		InvokeResult result = lambdaService.invoke(invokeRequest);
+		String ans = new String(result.getPayload().array(), StandardCharsets.UTF_8);
+		JsonElement element = JsonParser.parseString(ans);
+		return element.getAsJsonObject();
+	}
 
-    @Override
-    public JsonObject mailSendWithLambda(String payLoad) {
-        log.info("LambdaServiceImpl.mailSendWithLambda");
-        InvokeRequest invokeRequest = new InvokeRequest().withFunctionName(lambdaMailSenderName)
-                .withPayload(payLoad);
-        InvokeResult result = lambdaService.invoke(invokeRequest);
-        String ans = new String(result.getPayload().array(), StandardCharsets.UTF_8);
-        JsonElement element = JsonParser.parseString(ans);
-        return element.getAsJsonObject();
-    }
-
-    @Override
-    public JsonObject validEmailAndRegisterWithLambda(String payLoad) {
-        log.info("LambdaServiceImpl.validEmailAndRegisterWithLambda");
-        log.info("PayLoad : " + payLoad);
-        InvokeRequest invokeRequest = new InvokeRequest()
-                .withFunctionName(lambdaValidatorNameAndRegister).withPayload(payLoad);
-        InvokeResult result = lambdaService.invoke(invokeRequest);
-        String ans = new String(result.getPayload().array(), StandardCharsets.UTF_8);
-        log.info("Result : " + ans);
-        JsonElement element = JsonParser.parseString(ans);
-        return element.getAsJsonObject();
-    }
+	@Override
+	public JsonObject validEmailAndRegisterWithLambda(String payLoad) {
+		log.info("LambdaServiceImpl.validEmailAndRegisterWithLambda");
+		log.info("PayLoad : " + payLoad);
+		InvokeRequest invokeRequest = new InvokeRequest()
+				.withFunctionName(lambdaValidatorNameAndRegister)
+				.withPayload(payLoad);
+		InvokeResult result = lambdaService.invoke(invokeRequest);
+		String ans = new String(result.getPayload().array(), StandardCharsets.UTF_8);
+		log.info("Result : " + ans);
+		JsonElement element = JsonParser.parseString(ans);
+		return element.getAsJsonObject();
+	}
 
 }

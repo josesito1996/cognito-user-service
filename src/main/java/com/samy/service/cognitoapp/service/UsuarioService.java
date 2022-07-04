@@ -5,6 +5,7 @@ import com.samy.service.cognitoapp.model.Usuario;
 import com.samy.service.cognitoapp.model.request.ColaboratorRequest;
 import com.samy.service.cognitoapp.model.request.UserRequestBody;
 import com.samy.service.cognitoapp.model.response.UserResponseBody;
+import com.samy.service.cognitoapp.model.response.UsuariosPorEmpresaResponse;
 
 public interface UsuarioService extends ICrud<Usuario, String> {
 
@@ -36,4 +37,6 @@ public interface UsuarioService extends ICrud<Usuario, String> {
     public boolean activarUsuario(String tokenKey);
     
     public boolean activarColaborador(String tokenKey);
+    
+    public UsuariosPorEmpresaResponse verPorEmpresa(String empresa);
 }

@@ -15,7 +15,6 @@ public class SeguimientoController {
   @Autowired
   private SeguimientoService service;
 
-
   @GetMapping("/listByEmpresa/{empresa}/{usuario}")
   public Seguimiento listarPorEmpresaYUsuario(@PathVariable String empresa,
       @PathVariable String usuario) {
